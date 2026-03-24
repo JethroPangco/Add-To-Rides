@@ -1,0 +1,47 @@
+{
+  "expo": {
+    "name": "Add_To_Ride",
+    "slug": "Add_To_Ride",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/add-to-rides-blue.png",
+    "scheme": "addtoride",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#87CBDE",
+        "foregroundImage": "./assets/images/add-to-rides-blue.png"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/add-to-rides-blue.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/add-to-rides-blue.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#87CBDE",
+          "dark": {
+            "backgroundColor": "#87CBDE"
+          }
+        }
+      ],
+      "expo-font"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}
