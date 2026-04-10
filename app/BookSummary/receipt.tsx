@@ -1,7 +1,6 @@
 import * as React from "react";
-import { View, Text, ScrollView, Pressable } from "react-native";
-import { useRouter } from "expo-router";
-import { useLocalSearchParams } from "expo-router";
+import { View, Text, ScrollView, Pressable, Image } from "react-native";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import styles from "./receipt.styles";
 
 import { auth, db } from "../../src/config/firebaseConfig";
@@ -9,6 +8,8 @@ import { ref, get } from "firebase/database";
 
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
+
+import QRCode from "react-native-qrcode-svg";
 
 const Receipt = () => { 
     const router = useRouter();
@@ -38,124 +39,213 @@ const Receipt = () => {
     }
   };
 
+  const dateTime = (raw) => {
+    const date = new Date(raw);
+
+    const months = ["January","February","March","April","May","June", "July","August","September","October","November","December"];
+
+    const yr = date.getFullYear();
+    const mon = date.getMonth();
+    const day = date.getDate();
+
+    let hrs = date.getHours();
+    const mins = date.getMinutes().toString().padStart(2, "0");
+
+    const meridiem = hrs >= 12 ? "PM" : "AM";
+    hrs = hrs % 12 || 12;
+
+    return `${yr}-${mon}-${day} | ${hrs}:${mins} ${meridiem}`;
+  };
+
+  const shortRefNo = (ref: string) => {
+    const split = ref.split("-");
+    const firstRef = split[0]?.slice(0, 2);
+    const lastRef = split[1]?.slice(-4);
+
+    return `${firstRef}-${lastRef}`;
+  }
+
+
   const generateFile = async () => {
     if (!order) return;
 
     const html = `
-        <html>
-        <head>
+          <html>
+          <head>
           <style>
             body {
-              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-              margin: 0;
-              padding: 30px 20px;
-              background: white;
+              font-family: Arial, sans-serif;
+              padding: 20px;
+              background: #f2f2f2;
+            }
+
+            .ticket {
+              background: #fff;
+              border-radius: 15px;
+              padding-top: 15px;
+              position: relative;
               max-width: 400px;
-              margin: 0 auto;
+              margin: auto;
             }
+
+            .header {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+
+            .logo {
+              width: 60px;
+              height: 60px;
+              opacity: 0.5;
+              margin-right: 5px;
+            }
+
             .title {
-              font-size: 24px;
+              font-size: 20px;
               font-weight: bold;
-              text-align: center;
-              text-transform: uppercase;
-              margin-bottom: 20px;
-              color: #333;
             }
-            .uniqueRef {
-              text-align: right;
-              font-size: 16px;
-              font-weight: 600;
-              color: #666;
-              margin-bottom: 5px;
+
+            .cut-left, .cut-right {
+              position: absolute;
+              top: 40%;
+              width: 35px;
+              height: 35px;
+              background: #595959;
+              border-radius: 50%;
             }
-            .divider {
-              border-bottom: 1px solid #ddd;
-              margin: 20px -20px;
+
+            .cut-left {
+              left: -15px;
             }
-            .subTitle {
-              font-weight: bold;
-              font-size: 18px;
-              margin: 25px 0 10px 0;
+
+            .cut-right {
+              right: -15px;
             }
-            .details {
-              font-size: 16px;
-              line-height: 1.4;
-              margin-bottom: 5px;
+
+            .inner {
+              padding: 25px;
             }
-            .totals {
-              font-size: 18px;
-              font-weight: bold;
-              text-align: right;
-              margin-top: 5px;
-              color: #333;
-            }
-            .rideRes {
+
+            .qr-row {
               display: flex;
               justify-content: space-between;
-              padding: 8px 0;
-              border-bottom: 0.5px solid #eee;
+              align-items: center;
+              margin-bottom: 15px;
             }
-            .btn {
-              margin-top: 25px;
-              padding: 15px 20px;
-              border-radius: 8px;
-              text-align: center;
+
+            .qr-text {
+              flex: 1;
+              font-size: 15px;
+            }
+
+            .qr-text p {
+              margin: 2px 0;
+            }
+
+            .divider {
+              border-bottom: 1px solid #000;
+              margin: 15px 0;
+            }
+
+            .subtitle {
               font-weight: bold;
-              font-size: 16px;
-              color: white;
-              text-decoration: none;
-              display: block;
+              margin-top: 10px;
+              font-size: 18px;
             }
-            .downloadBtn {
-              background: #87cbde;
-              margin-bottom: 10px;
+
+            .details {
+              font-size: 15px;
             }
-            .confirmBtn {
-              background: #7a0000;
+
+            .totals {
+              text-align: right;
+              font-size: 17px;
             }
+
+            .ride {
+              display: flex;
+              justify-content: space-between;
+              font-size: 15px;
+              margin-top: 5px;
+            }
+
           </style>
-        </head>
-        <body>
-          <div class="title">RECEIPT | ADD-TO-RIDES </div>
-          
-          <div class="uniqueRef">Ref No: ${order.payment.reference}</div>
-          <div class="uniqueRef">Date: ${order.payment.date}</div>
+          </head>
 
-          <div class="divider"></div>
+          <body>
 
-          <div class="subTitle">Entrance Ticket</div>
-          <div class="details">${order.entranceTicket?.date || 'N/A'}</div>
-          <div class="details" style="text-transform: capitalize;">
-            ${order.entranceTicket?.tickets 
-              ? Object.entries(order.entranceTicket.tickets)
-                  .filter(([_, val]) => val > 0)
-                  .map(([k, v]) => `${k} (${v})`).join('; ') 
-              : 'None'}
-          </div>
-          <div class="totals">Php ${order.entranceTicket?.totalPrice || 0}</div>
+            <div class="ticket">
 
-          <div class="divider"></div>
-
-          <div class="subTitle">Rides</div>
-          ${order.ridesTicket?.rides?.length > 0 
-            ? order.ridesTicket.rides.map((r: any) => `
-              <div class="rideRes">
-                <div class="details">${r.name} (x${r.quantity})</div>
-                <div class="totals">Php ${r.totalPrice ?? r.price * r.quantity}</div>
+              <div class="header">
+                <img src="../../assets/images/add-to-rides-white.png"/>
+                <div class="title">ADD-TO-RIDES</div>
               </div>
-            `).join('')
-            : '<div class="details">No rides booked</div>'
-          }
 
-          <div class="divider"></div>
+              <div class="cut-left"></div>
+              <div class="cut-right"></div>
 
-          <div class="totals" style="margin-top: 10px;">TOTAL: Php ${order.payment.totalPay.toFixed(2)}</div>
-          <div class="details" style="text-align: right;">Points Earned: ${order.collectedPoints || 0}</div>
+              <div class="inner">
 
-        </div>
-      </body>
-      </html>
-    `;
+                <div class="qr-row">
+                  
+                  <div class="qr-text">
+                    <p><b>Ref No:</b> ${shortRefNo(order.payment.reference)}</p>
+                    <p><b>Date:</b> ${dateTime(order.payment.date)}</p>
+                  </div>
+
+                  
+                  <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${order.payment.reference}" />
+
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="subtitle">Entrance Ticket:</div>
+                <div class="details">${order.entranceTicket?.date}</div>
+
+                <div class="details">
+                  ${
+                    order.entranceTicket?.tickets
+                      ? Object.entries(order.entranceTicket.tickets)
+                          .filter(([_, val]) => val > 0)
+                          .map(([k, v]) => `${k} (${v})`)
+                          .join("; ")
+                      : ""
+                  }
+                </div>
+
+                <div class="totals">
+                  Php ${order.entranceTicket?.totalPrice || 0}
+                </div>
+
+                <div class="subtitle">Rides:</div>
+
+                ${
+                  order.ridesTicket?.rides?.map((r) => `
+                    <div class="ride">
+                      <span>${r.name} (x${r.quantity})</span>
+                      <span>Php ${r.totalPrice ?? r.price * r.quantity}</span>
+                    </div>
+                  `).join("")
+                }
+
+                <div class="divider"></div>
+
+                <div class="totals">
+                  <b>TOTAL: Php ${order.payment.totalPay.toFixed(2)}</b>
+                </div>
+
+                <div class="totals">
+                  Points Earned: ${order.collectedPoints}
+                </div>
+
+              </div>
+            </div>
+
+          </body>
+          </html>
+        `;
 
     const { uri } = await Print.printToFileAsync({ html });
     await Sharing.shareAsync(uri);
@@ -165,48 +255,82 @@ const Receipt = () => {
 
   return (
     <ScrollView style={styles.scroll}>
-      <Text style={styles.title}>RECEIPT | ADD-TO-RIDES </Text>
 
-      <Text style={styles.uniqueRef}>Ref No: {order.payment.reference}</Text>
-      <Text style={styles.uniqueRef}>Date: <Text></Text>{order.payment.date}</Text>
-
-      <View style={styles.divider}/>
-
-      <Text style={styles.subTitle}>Entrance Ticket:</Text>
-      <Text style={styles.details}>{order.entranceTicket?.date}</Text>
-      <Text style={[styles.details, {textTransform: "capitalize"}]}>
-        {order.entranceTicket?.tickets
-          ? Object.entries(order.entranceTicket.tickets)
-              .filter(([_, val]) => val > 0)
-              .map(([k, v]) => `${k} (${v})`)
-              .join("; ")
-          : ""}
-      </Text>
-      <Text style={styles.totals}>Php {order.entranceTicket?.totalPrice || 0}</Text>
-
-      <Text style={styles.subTitle}>Rides:</Text>
-      {order.ridesTicket?.rides?.map((r: any) => (
-        <View key={r.id} style={styles.rideRes}>
-            <Text style={{ fontSize: 17, marginBottom: 5 }}>
-                {r.name} (x{r.quantity})
-            </Text>
-            <Text style={{ fontSize: 17, marginBottom: 5 }}>
-                Php {r.totalPrice ?? r.price * r.quantity}
-            </Text>
+      <View style={styles.ticketWrapper}>
+        <View style={styles.header}>
+            <Image 
+                source={require("../../assets/images/add-to-rides-white.png")}
+                style={styles.logo}
+              />
+            <Text style={styles.title}> ADD-TO-RIDES </Text>
         </View>
         
-      ))}
+        <View style={styles.cutLeft} />
+        <View style={styles.cutRight} />
 
-    <View style={styles.divider}/>
+        <View style={styles.ticketInner}>
+          <View style={styles.qrRow}>
+            
+            <View style={styles.qrText}>
+              <Text style={styles.uniqueRef}>
+                Ref No: {shortRefNo(order.payment.reference)}
+              </Text>
 
-      <Text style={[styles.subTitle, {textAlign: "right"}]}>TOTAL: Php {order.payment.totalPay.toFixed(2)}</Text>
-      <Text style={[styles.details, {textAlign: "right"}]}>Points Earned: {order.collectedPoints}</Text>
+              <Text style={styles.uniqueRef}>
+                Date: {dateTime(order.payment.date)}
+              </Text>
+            </View>
+            
+            <View style={styles.qrCode}>
+              <QRCode 
+                value={order.payment.reference}
+                size={90}
+              />
+            </View>
 
+          </View>
+
+          <View style={styles.divider}/>
+
+          <Text style={styles.subTitle}>Entrance Ticket:</Text>
+          <Text style={styles.details}>{order.entranceTicket?.date}</Text>
+          <Text style={[styles.details, {textTransform: "capitalize"}]}>
+            {order.entranceTicket?.tickets
+              ? Object.entries(order.entranceTicket.tickets)
+                  .filter(([_, val]) => val > 0)
+                  .map(([k, v]) => `${k} (${v})`)
+                  .join("; ")
+              : ""}
+          </Text>
+          <Text style={styles.totals}>Php {order.entranceTicket?.totalPrice || 0}</Text>
+
+          <Text style={styles.subTitle}>Rides:</Text>
+              {order.ridesTicket?.rides?.map((r: any) => (
+                <View key={r.id} style={styles.rideRes}>
+                    <Text style={{ fontSize: 17, marginBottom: 5 }}>
+                        {r.name} (x{r.quantity})
+                    </Text>
+                    <Text style={{ fontSize: 17, marginBottom: 5 }}>
+                        Php {r.totalPrice ?? r.price * r.quantity}
+                    </Text>
+                </View>
+                
+              ))}
+
+          <View style={styles.divider}/>
+          
+          <Text style={[styles.subTitle, {textAlign: "right"}]}>TOTAL: Php {order.payment.totalPay.toFixed(2)}</Text>
+          
+          <Text style={[styles.details, {textAlign: "right"}]}>Points Earned: {order.collectedPoints}</Text>
+
+        </View>
+      </View>
+      
       <Pressable
         onPress={generateFile}
         style={styles.downloadBtn}
       >
-        <Text style={{ color: "#fff", textAlign: "center", fontWeight: "bold" }}>DOWNLOAD RECEIPT</Text>
+        <Text style={{ color: "#fff", textAlign: "center", fontWeight: "bold" }}>DOWNLOAD TICKET</Text>
       </Pressable>
 
       <Pressable

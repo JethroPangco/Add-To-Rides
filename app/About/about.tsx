@@ -10,9 +10,6 @@ import styles from "./about.styles";
 import { useRouter } from "expo-router";
 import BottomNav from "../Navigation/BottomNav";
 
-import { auth, db } from "../../src/config/firebaseConfig";
-import { ref, get } from "firebase/database";
-
 const AboutUs = () => {
   const router = useRouter();
   

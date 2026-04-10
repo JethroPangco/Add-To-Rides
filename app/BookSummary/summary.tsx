@@ -55,7 +55,7 @@ const BookingSummary = () => {
     const ridePoints = rides?.totalPoints || 0;
     const grandTotal = entranceTotal + rideTotal;
 
-    const refNumber = () => `ATR-${Date.now()}-${Math.floor(Math.random() * 9999)}`;
+    const refNumber = () => `ATR-${Date.now()}`;
 
     const handlePayment = async () => {
         if (!userId) return;
