@@ -3,6 +3,9 @@ import { View, Image, Text, Pressable, TextInput } from "react-native";
 import { useRouter } from "expo-router";
 import styles from "./Login.styles";
 
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../src/config/firebaseConfig";
+
 export default function Login() {
     const router = useRouter();
     const [email, setEmail] = useState("");
@@ -12,7 +15,7 @@ export default function Login() {
         email?: string;
         password?: string;
     };
-    
+
     const [errors, setErrors] = useState<Errors>({});
     
     const validate = () => {
@@ -24,6 +27,27 @@ export default function Login() {
         setErrors(errors);
 
         return Object.keys(errors).length === 0;
+    };
+
+    const handleLogin = async () => {
+        if (!validate()) return;
+
+        try {
+            const userCredential = await signInWithEmailAndPassword(
+                auth,
+                email,
+                password
+            );
+
+            console.log("Logged in:", userCredential.user);
+
+            router.push('../../Home/home');
+        } catch (error: any) {
+            console.log(error.message);
+            setErrors({
+                email: "Invalid email or password"
+            });
+        }
     };
 
     return (
@@ -48,9 +72,8 @@ export default function Login() {
 
         <Text style={styles.title}>Log In</Text>
 
-            {
-                errors.email ? (<Text style={styles.errorText}>{errors.email}</Text>) : null
-            }
+        {errors.email ? (<Text style={styles.errorText}>{errors.email}</Text>) : null}
+
         <TextInput
             style={styles.inputBox}
             placeholder="Email"
@@ -60,10 +83,7 @@ export default function Login() {
             autoCapitalize="none"
         />
 
-
-            {
-                errors.password ? (<Text style={styles.errorText}>{errors.password}</Text>) : null
-            }   
+        {errors.password ? (<Text style={styles.errorText}>{errors.password}</Text>) : null}
 
         <TextInput
             style={styles.inputBox}
@@ -79,19 +99,16 @@ export default function Login() {
             <Text style={styles.forgot}>Forgot Password?</Text>
         </Pressable>
 
-        <Pressable style={styles.loginButton}
-                onPress={() => {
-                    if (validate()){
-                        router.push('../../Home/home')
-                    }
-                }}>
+        <Pressable style={styles.loginButton} onPress={handleLogin}>
             <Text style={styles.loginText}>Log In</Text>
         </Pressable>
 
         <Text style={styles.signupText}>Don't have an account?</Text>
 
-        <Pressable style={styles.signupButton}
-                onPress={() => router.push('../../Signup/SignUp-mod')}>
+        <Pressable 
+            style={styles.signupButton}
+            onPress={() => router.push('../../Signup/SignUp-mod')}
+        >
             <Text style={styles.signupButtonText}>Create an account</Text>
         </Pressable>
 

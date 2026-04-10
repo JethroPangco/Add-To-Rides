@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
 import {
-  ScrollView,
   View,
   Text,
   Image,
@@ -13,6 +12,7 @@ import {
   Dimensions,
 } from "react-native";
 import styles from "./ride.styles";
+import rides from "./rideList";
 import Sidebar from "../Navigation/Sidebar";
 import BottomNav from "../Navigation/BottomNav";
 
@@ -26,201 +26,7 @@ const RideReservation = () => {
 
   const sidebarX = React.useRef(new Animated.Value(-SIDEBAR_WIDTH)).current;
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const rides = [
-    //Exciting
-    {
-      id: "1",
-      name: "WHEEL OF FATE",
-      category: "exciting",
-      label: "Exciting / Family / Kiddy",
-      details: "All Ages | No height limit | 5-7 minutes",
-      image: require("../../assets/exciting/wheel-of-fate.jpg"),
-    },
-    {
-      id: "2",
-      name: "JUNGLE LOG JAM",
-      category: "exciting",
-      label: "Exciting / Family / Kiddy",
-      details: "6+ | 117 cm minimum | 3-4 minutes",
-      image: require("../../assets/exciting/jungle-log.jpg"),
-    },
-    {
-      id: "3",
-      name: "RIO GRANDE RAPIDS",
-      category: "exciting",
-      label: "Exciting / Family / Kiddy",
-      details: "6+ | 107 cm minimum | 4-5 minutes",
-      image: require("../../assets/exciting/rio-grande.jpg"),
-    },
-    {
-      id: "4",
-      name: "THE GRAND CAROUSEL",
-      category: "exciting",
-      label: "Exciting / Family / Kiddy",
-      details: "All Ages | No height limit | 2-3 minutes",
-      image: require("../../assets/exciting/carousel.png"),
-    },
-
-    {
-      id: "5",
-      name: "AIR PTERODACTYL",
-      category: "exciting",
-      label: "Exciting / Family / Kiddy",
-      details: "3+ | 122 cm minimum | 2-3 minutes",
-      image: require("../../assets/exciting/air-pterodactyle.jpg"),
-    },
-    {
-      id: "6",
-      name: "RIALTO",
-      category: "exciting",
-      label: "Exciting / Family / Kiddy",
-      details: "All Ages | No height limit | 10-15 minutes",
-      image: require("../../assets/exciting/rialto.jpg"),
-    },
-
-    {
-      id: "7",
-      name: "AGILA: THE EXPERIENCE",
-      category: "exciting",
-      label: "Exciting / Family / Kiddy",
-      details: "5+ | No height limit | 10 minutes",
-      image: require("../../assets/exciting/agila.png"),
-    },
-    {
-      id: "8",
-      name: "UP, UP AND AWAY",
-      category: "exciting",
-      label: "Exciting / Family / Kiddy",
-      details: "4+ | 109 cm minimum | 3-4 minutes",
-      image: require("../../assets/exciting/up-away.jpg"),
-    },
-
-    //Thrilling
-    {
-      id: "1",
-      name: "EKLIPSE",
-      category: "thrilling",
-      label: "Thrilling",
-      details: "10+ | 122 cm minimum | 2-3 minutes",
-      image: require("../../assets/thrilling/eklipse.jpg"),
-    },
-    {
-      id: "2",
-      name: "EKSTREME TOWER",
-      category: "thrilling",
-      label: "Thrilling / Extreme",
-      details: "12+ | 117 cm minimum | 3-4 minutes",
-      image: require("../../assets/thrilling/ekstreme.png"),
-    },
-    {
-      id: "3",
-      name: "ANCHORS AWAY",
-      category: "thrilling",
-      label: "Thrilling",
-      details: "10+ | 122 cm minimum | 2-3 minutes",
-      image: require("../../assets/thrilling/anchors-away.png"),
-    },
-    {
-      id: "4",
-      name: "ROLLER SKATER",
-      category: "thrilling",
-      label: "Thrilling",
-      details: "6+ | 107 cm minimum | 2 minutes",
-      image: require("../../assets/thrilling/roller-skater.jpg"),
-    },
-    {
-      id: "5",
-      name: "FLYING FIESTA",
-      category: "thrilling",
-      label: "Thrilling",
-      details: "8+ | 122 cm minimum | 3 minutes",
-      image: require("../../assets/thrilling/flying.jpg"),
-    },
-    {
-      id: "6",
-      name: "AIR RACE",
-      category: "thrilling",
-      label: "Thrilling / Extreme",
-      details: "10+ | 122 cm minimum | 2-3 minutes",
-      image: require("../../assets/thrilling/air-race.jpg"),
-    },
-    {
-      id: "7",
-      name: "TWIN SPIN",
-      category: "thrilling",
-      label: "Thrilling / Extreme",
-      details: "10+ | 122 cm minimum | 2-3 minutes",
-      image: require("../../assets/thrilling/twin-spin.jpg"),
-    },
-    {
-      id: "8",
-      name: "BUMP N' SPLASH",
-      category: "thrilling",
-      label: "Thrilling",
-      details: "10+ | 122 cm minimum | 3 minutes",
-      image: require("../../assets/thrilling/bump.jpg"),
-    },
-    
-    //Extreme
-    {
-      id: "1",
-      name: "SPACE SHUTTLE",
-      category: "extreme",
-      label: "Extreme",
-      details: "12+ | 122 cm minimum | 2 minutes",
-      image: require("../../assets/extreme/space-shuttle.jpg"),
-    },
-    {
-      id: "2",
-      name: "EKSTREME TOWER",
-      category: "extreme",
-      label: "Thrilling / Extreme",
-      details: "12+ | 117 cm minimum | 3-4 minutes",
-      image: require("../../assets/extreme/ekstreme.png"),
-    },
-    {
-      id: "3",
-      name: "DISK-O-MAGIC",
-      category: "extreme",
-      label: "Extreme",
-      details: "10+ | 122 cm minimum | 2-3 minutes",
-      image: require("../../assets/extreme/disk.jpg"),
-    },
-    {
-      id: "4",
-      name: "FUN KART",
-      category: "extreme",
-      label: "Extreme",
-      details: "10+ | 120 cm minimum | 5-7 minutes",
-      image: require("../../assets/extreme/fun-kart.jpg"),
-    },
-    {
-      id: "5",
-      name: "XTREME PAINTBALL",
-      category: "extreme",
-      label: "Extreme",
-      details: "12+ | No Age Limit | 10-15 minutes",
-      image: require("../../assets/extreme/xpp01.jpg"),
-    },
-    {
-      id: "6",
-      name: "AIR RACE",
-      category: "extreme",
-      label: "Thrilling / Extreme",
-      details: "10+ | 122 cm minimum | 2-3 minutes",
-      image: require("../../assets/extreme/air-race.jpg"),
-    },
-    {
-      id: "7",
-      name: "TWIN SPIN",
-      category: "extreme",
-      label: "Thrilling / Extreme",
-      details: "10+ | 122 cm minimum | 2-3 minutes",
-      image: require("../../assets/extreme/twin-spin.jpg"),
-    },
-  ];
-
+  
   const filtered = rides.filter(
     (ride) =>
       ride.category === category &&
@@ -281,9 +87,14 @@ const RideReservation = () => {
         <View style={styles.cardText}>
           <Text style={styles.title}>{item.name}</Text>
           <Text style={styles.subtitle}>{item.label}</Text>
-          <Text style={styles.details}>{item.details}</Text>
+          <Text style={styles.details}>{item.age} | {item.height} | {item.duration}</Text>
         
-          <Pressable onPress={() => alert(item.name)}>
+          <Pressable onPress={() => 
+              router.push({
+                pathname: "./RideInfo/rideDeets",
+                params: { id: item.id },
+              })
+              }>
             <Text style={styles.view}>View Details</Text>
           </Pressable>
         </View>
@@ -304,16 +115,19 @@ const RideReservation = () => {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.topIcons}>
-          <Pressable onPress={openSidebar}>
-            <Image
-              source={require("../../assets/icons/menu-bar.png")}
-              style={styles.headerIcon}
-            />
-          </Pressable>
 
-          <Text style={styles.headerTitle}>Ride Reservation</Text>
+          <View style={styles.topLeft}>
+            <Pressable onPress={openSidebar}>
+              <Image
+                source={require("../../assets/icons/menu-bar.png")}
+                style={styles.headerIcon}
+              />
+            </Pressable>
 
-          <View style={styles.topRightIcons}>
+            <Text style={styles.headerTitle}>Ride Reservation</Text>
+          </View>
+
+          <Pressable style={styles.topRightIcons} onPress={() => router.push('../Cart/cart')}>
             <Image
               source={require("../../assets/icons/cart.png")}
               style={styles.headerIcon}
@@ -322,7 +136,7 @@ const RideReservation = () => {
               source={require("../../assets/icons/notif.png")}
               style={styles.headerIcon}
             />
-          </View>
+          </Pressable>
         </View>
       </View>
 
@@ -335,25 +149,31 @@ const RideReservation = () => {
             
             <View style={styles.category}>
               
-              {/* SEARCH */}
+              {/* Search */}
               <View style={styles.infoBox}>
                 <TextInput
                   placeholder="Search..."
                   value={search}
                   onChangeText={setSearch}
+                  
                 />
               </View>
 
-              {/* BUTTONS */}
-              <View style={{ flexDirection: "row", gap: 10 }}>
+              {/* Buttons */}
+              <View style={styles.btn}>
                 {["exciting", "thrilling", "extreme"].map((item) => (
                   <Pressable key={item} onPress={() => setCategory(item)}>
                     <Text
                       style={{
-                        fontWeight: category === item ? "bold" : "normal",
-                        textDecorationLine:
-                          category === item ? "underline" : "none",
-                        color: category === item ? "#28b1ff" : "#000",
+                        fontWeight: "bold",
+                        color: category === item ? "#fff" : "#3a3b3d",
+                        borderColor: category === item ? "#87cbde" : "#3a3b3d",
+                        borderWidth: 3,
+                        padding: 4,
+                        paddingRight: 10,
+                        paddingLeft: 10,
+                        borderRadius: 20,
+                        fontSize: 17 
                       }}
                     >
                       {item}
@@ -365,22 +185,20 @@ const RideReservation = () => {
           </View>
         </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* CARDS */}
+        {/* Cards */}
         <FlatList
           data={filtered}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           numColumns={2}
-          scrollEnabled={false}
           columnWrapperStyle={{
             justifyContent: "space-between",
             paddingHorizontal: 20,
           }}
+          contentContainerStyle={styles.scrollContent}
         />
 
-      </ScrollView>
-
+      {/* Bottom Nav */}
       <BottomNav />
     </View>
   );

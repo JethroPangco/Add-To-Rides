@@ -1,0 +1,287 @@
+export default [
+    //Exciting
+    {
+      id: "1",
+      name: "WHEEL OF FATE",
+      category: "exciting",
+      label: "Exciting / Family / Kiddy",
+      age: "All Ages",
+      height: "No height limit",
+      duration: "5-7 minutes",
+      image: require("../../assets/exciting/wheel-of-fate.jpg"),
+      price: 100,
+      descrip: "Giant Ferris wheel offering a relaxing view of the park."
+      
+    },
+    {
+      id: "2",
+      name: "JUNGLE LOG JAM",
+      category: "exciting",
+      label: "Exciting / Family / Kiddy",
+      age: "6+ of Age",
+      height: "117 cm minimum",
+      duration: "3-4 minutes",
+      image: require("../../assets/exciting/jungle-log.jpg"),
+      price: 100,
+      descrip: "Water log ride with gentle drops and splashes."
+    },
+    {
+      id: "3",
+      name: "RIO GRANDE RAPIDS",
+      category: "exciting",
+      label: "Exciting / Family / Kiddy",
+      age: "6+ of Age",
+      height: "107 cm minimum",
+      duration: "4-5 minutes",
+      image: require("../../assets/exciting/rio-grande.jpg"),
+      price: 100,
+      descrip: "River rafting adventure with mild rapids."
+    },
+    {
+      id: "4",
+      name: "THE GRAND CAROUSEL",
+      category: "exciting",
+      label: "Exciting / Family / Kiddy",
+      details: "All Ages | No height limit | 2-3 minutes",
+      age: "All Ages",
+      height: "No height limit",
+      duration: "2-3 minutes",
+      image: require("../../assets/exciting/carousel.png"),
+      price: 100,
+      descrip: "Classic carousel with horses and gentle motion."
+    },
+
+    {
+      id: "5",
+      name: "AIR PTERODACTYL",
+      category: "exciting",
+      label: "Exciting / Family / Kiddy",
+      age: "3+ of Age",
+      height: "122 cm minimum",
+      duration: "2-3 minutes",
+      image: require("../../assets/exciting/air-pterodactyle.jpg"),
+      price: 100,
+      descrip: "Kid-friendly airplane ride with circular motion."
+    },
+    {
+      id: "6",
+      name: "RIALTO",
+      category: "exciting",
+      label: "Exciting / Family / Kiddy",
+      age: "All Ages",
+      height: "No height limit",
+      duration: "10-15 minutes",
+      image: require("../../assets/exciting/rialto.jpg"),
+      price: 100,
+      descrip: "Indoor cinema attraction featuring short animated or adventure films with visual effects."
+    },
+
+    {
+      id: "7",
+      name: "AGILA: THE EXPERIENCE",
+      category: "exciting",
+      label: "Exciting / Family / Kiddy",
+      age: "5+ of Age",
+      height: "No height limit",
+      duration: "10 minutes",
+      image: require("../../assets/exciting/agila.png"),
+      price: 100,
+      descrip: "River rafting adventure with mild rapids."
+    },
+    {
+      id: "8",
+      name: "UP, UP AND AWAY",
+      category: "exciting",
+      label: "Exciting / Family / Kiddy",
+      age: "4+ of Age",
+      height: "109 cm minimum",
+      duration: "3-4 minutes",
+      image: require("../../assets/exciting/up-away.jpg"),
+      price: 100,      
+      descrip: "River rafting adventure with mild rapids."
+    },
+
+    //Thrilling
+    {
+      id: "9",
+      name: "EKLIPSE",
+      category: "thrilling",
+      label: "Thrilling",
+      age: "10+ of Age",
+      height: "122 cm minimum",
+      duration: "2-3 minutes",
+      image: require("../../assets/thrilling/eklipse.jpg"),
+      price: 120,      
+      descrip: "A spinning ride that swings riders in multiple directions."
+    },
+    {
+      id: "10",
+      name: "EKSTREME TOWER",
+      category: "thrilling",
+      label: "Thrilling / Extreme",
+      age: "12+ of Age",
+      height: "117 cm minimum",
+      duration: "3-4 minutes",
+      image: require("../../assets/thrilling/ekstreme.png"),
+      price: 120,      
+      descrip: "A vertical drop tower delivering an intense free-fall experience."
+    },
+    {
+      id: "11",
+      name: "ANCHORS AWAY",
+      category: "thrilling",
+      label: "Thrilling",
+      age: "10+ of Age",
+      height: "122 cm minimum",
+      duration: "2-3 minutes",
+      image: require("../../assets/thrilling/anchors-away.png"),
+      price: 120,      
+      descrip: "A giant swinging ship ride that moves back and forth at increasing heights."
+    },
+    {
+      id: "12",
+      name: "ROLLER SKATER",
+      category: "thrilling",
+      label: "Thrilling",
+      age: "6+ of Age",
+      height: "107 cm minimum",
+      duration: "2 minutes",
+      image: require("../../assets/thrilling/roller-skater.jpg"),
+      price: 120,      
+      descrip: "A beginner-friendly roller coaster with smooth turns and drops."
+    },
+    {
+      id: "13",
+      name: "FLYING FIESTA",
+      category: "thrilling",
+      label: "Thrilling",
+      age: "8+ of Age",
+      height: "122 cm minimum",
+      duration: "3 minutes",
+      image: require("../../assets/thrilling/flying.jpg"),
+      price: 120,      
+      descrip: "A rotating swing ride that lifts riders high into the air."
+    },
+    {
+      id: "14",
+      name: "AIR RACE",
+      category: "thrilling",
+      label: "Thrilling / Extreme",
+      age: "10+ of Age",
+      height: "122 cm minimum",
+      duration: "2-3 minutes",
+      image: require("../../assets/thrilling/air-race.jpg"),
+      price: 120,      
+      descrip: "A high-speed ride that spins riders in full 360-degree rotations."
+    },
+    {
+      id: "15",
+      name: "TWIN SPIN",
+      category: "thrilling",
+      label: "Thrilling / Extreme",
+      age: "10+ of Age",
+      height: "122 cm minimum",
+      duration: "2-3 minutes",
+      image: require("../../assets/thrilling/twin-spin.jpg"),
+      price: 120,      
+      descrip: "A double-arm spinning ride with fast and unpredictable motion."
+    },
+    {
+      id: "16",
+      name: "BUMP N' SPLASH",
+      category: "thrilling",
+      label: "Thrilling",
+      age: "10+ of Age",
+      height: "122 cm minimum",
+      duration: "3 minutes",
+      image: require("../../assets/thrilling/bump.jpg"),
+      price: 120,      
+      descrip: "A bumper boat ride combining water fun and light collisions."
+    },
+    
+    //Extreme
+    {
+      id: "17",
+      name: "SPACE SHUTTLE",
+      category: "extreme",
+      label: "Extreme",
+      age: "12+ of Age",
+      height: "122 cm minimum",
+      duration: "2 minutes",
+      image: require("../../assets/extreme/space-shuttle.jpg"),
+      price: 150,
+      descrip: "A spinning ride that swings riders in multiple directions."
+    },
+    {
+      id: "18",
+      name: "EKSTREME TOWER",
+      category: "extreme",
+      label: "Thrilling / Extreme",
+      age: "12+ of Age",
+      height: "117 cm minimum",
+      duration: "3-4 minutes",
+      image: require("../../assets/extreme/ekstreme.png"),
+      price: 150,
+      descrip: "A vertical drop tower delivering an intense free-fall experience."
+    },
+    {
+      id: "19",
+      name: "DISK-O-MAGIC",
+      category: "extreme",
+      label: "Extreme",
+      age: "10+ of Age",
+      height: "122 cm minimum",
+      duration: "2-3 minutes",
+      image: require("../../assets/extreme/disk.jpg"),
+      price: 150,
+      descrip: "A spinning disk ride that glides along a curved track while rotating riders in thrilling motion."
+    },
+    {
+      id: "20",
+      name: "FUN KART",
+      category: "extreme",
+      label: "Extreme",
+      age: "10+ of Age",
+      height: "120 cm minimum",
+      duration: "5-7 minutes",
+      image: require("../../assets/extreme/fun-kart.jpg"),
+      price: 150,
+      descrip: "A fast-paced go-kart experience where riders race around a winding track for fun and excitement."
+    },
+    {
+      id: "21",
+      name: "XTREME PAINTBALL",
+      category: "extreme",
+      label: "Extreme",
+      age: "12+ of Age",
+      height: "No height Limit",
+      duration: "10-15 minutes",
+      image: require("../../assets/extreme/xpp01.jpg"),
+      price: 150,
+      descrip: "An action-packed shooting game where players compete in teams using paintball markers in a tactical arena."
+    },
+    {
+      id: "22",
+      name: "AIR RACE",
+      category: "extreme",
+      label: "Thrilling / Extreme",
+      age: "10+ of Age",
+      height: "122 cm minimum",
+      duration: "2-3 minutes",
+      image: require("../../assets/extreme/air-race.jpg"),
+      price: 150,
+      descrip: "A high-speed ride that spins riders in full 360-degree rotations."
+    },
+    {
+      id: "23",
+      name: "TWIN SPIN",
+      category: "extreme",
+      label: "Thrilling / Extreme",
+      age: "10+ of Age",
+      height: "122 cm minimum",
+      duration: "2-3 minutes",
+      image: require("../../assets/extreme/twin-spin.jpg"),
+      price: 150,
+      descrip: "A double-arm spinning ride with fast and unpredictable motion."
+    },
+  ];

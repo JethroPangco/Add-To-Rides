@@ -10,7 +10,7 @@ export default StyleSheet.create({
     
     scrollContent: { 
         paddingBottom: 110,
-        paddingTop: 20
+        paddingTop: 10
     },
   
     /* Header */
@@ -43,6 +43,12 @@ export default StyleSheet.create({
         flexDirection: "row",
         gap: 15
     },
+
+    topLeft: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 10
+    },
     
     headerTitle: { 
         textAlign: "left",
@@ -56,56 +62,57 @@ export default StyleSheet.create({
         backgroundColor: "#5badc4",
         paddingTop: 110,
         paddingBottom: 15,
-        paddingHorizontal: 20,   
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 10
+        paddingHorizontal: 10,  
     },
 
     infoSection: {  
-        alignItems: "center"
+        width: "100%",
     },
 
     category: {
-        flexDirection: "row", 
-        alignItems: "center" 
+        width: "100%",
+        gap: 10,
     },
 
     infoBox: {  
-        width: 300,
-        height: 40,
-        borderRadius: 20,
+        width: "100%",
+        height: 50,
+        borderRadius: 100,
         backgroundColor: "#fff",
         justifyContent: "center",
         paddingHorizontal: 15,
-        overflow: "hidden", 
-        borderColor: "#000",
-        borderWidth: 1,
-        flex: 1, 
-        marginRight: 10 
+        borderColor: "#87cbde",
+        borderWidth: 3,
+    
     },
     
     sidebar:{
         position:"absolute",
-        left:0,
-        top:0,
-        bottom:0,
+        left: 0,
+        top: 0,
+        bottom: 0,
         width:SCREEN_WIDTH * 0.75,
         backgroundColor:"#fff",
         paddingTop:30,
         paddingHorizontal:20,
-        zIndex:100,
-        elevation:100
+        zIndex: 100,
+        elevation: 100
     },
 
     overlay:{
         position:"absolute",
-        top:0,
-        left:0,
-        right:0,
-        bottom:0,
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
         backgroundColor:"rgba(0,0,0,0.35)",
-        zIndex:90
+        zIndex: 90
+    },
+    
+    btn: {
+        flexDirection: "row",
+        justifyContent: "center", 
+        gap: 20,
     },
 
     card: {
@@ -123,7 +130,7 @@ export default StyleSheet.create({
 
     image: {
         width: "100%",
-        height: 150,
+        height: 110,
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10
     },

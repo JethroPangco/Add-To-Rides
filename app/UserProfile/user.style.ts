@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export default StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#87CEDE"
+        backgroundColor: "#fff"
     },
     
     scroll: {
@@ -14,7 +14,7 @@ export default StyleSheet.create({
       alignItems: "center",
       paddingTop: 60,
       paddingBottom: 100,
-      backgroundColor: "#28b1ff"
+      backgroundColor: "#87CEDE"
     },
   
     arrowBack: {
@@ -56,7 +56,7 @@ export default StyleSheet.create({
     },
   
     label: {
-        color: "#fff",
+        color: "#000",
         fontWeight: "bold",
         marginTop: 20,
         fontSize: 18 
@@ -65,8 +65,8 @@ export default StyleSheet.create({
     input: {
         borderBottomWidth: 2,
         borderLeftWidth: 2,
-        borderColor: "#fff",
-        color: "#fff",
+        borderColor: "#000",
+        color: "#000",
         paddingVertical: 10,
         paddingHorizontal: 10,
         fontSize: 15

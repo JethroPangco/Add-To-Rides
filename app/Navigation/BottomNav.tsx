@@ -9,20 +9,18 @@ const BottomNav = () => {
   return (
     <View style={styles.bottomNav}>
 
-      <Pressable style={styles.navItem}>
+      <Pressable style={styles.navItem} onPress={() => router.push('../Reward/reward')}>
         <Image
           source={require("../../assets/icons/reward.png")}
           style={styles.navIcon}
         />
-        <Text style={styles.navText}>Reward</Text>
       </Pressable>
 
-      <Pressable style={styles.navItem} >
+      <Pressable style={styles.navItem} onPress={() => router.push('../EntranceTicket/enticket')}>
         <Image
           source={require("../../assets/icons/ent-ticket.png")}
           style={styles.navIcon}
         />
-        <Text style={styles.navText}>Ticket</Text>
       </Pressable>
 
       <Pressable style={styles.navItem} onPress={() => router.push('../../Home/home')}>
@@ -30,7 +28,6 @@ const BottomNav = () => {
           source={require("../../assets/icons/home-icon.png")}
           style={styles.navIcon}
         />
-        <Text style={styles.navText}>Home</Text>
       </Pressable>
 
       <Pressable style={styles.navItem} onPress={() => router.push('../../Ride/ride')}>
@@ -38,16 +35,13 @@ const BottomNav = () => {
           source={require("../../assets/icons/ride-reserv.png")}
           style={styles.navIcon}
         />
-        <Text style={styles.navText}>Ride Reserv</Text>
       </Pressable>
 
       <Pressable onPress={() => router.push('../../UserProfile/user')} style={styles.navItem} >
         <Image
           source={require("../../assets/icons/user-setting.png")}
           style={styles.navIcon}
-          
         />
-        <Text style={styles.navText}>Profile</Text>
       </Pressable>
 
     </View>

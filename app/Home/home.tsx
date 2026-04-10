@@ -121,13 +121,13 @@ const Home = () => {
             </Pressable>
 
             <View style={styles.topRightIcons}>
-              <Pressable onPress={() => alert("Cart Pressed")}>
+              <Pressable  onPress={() => router.push('../Cart/cart')}>
                 <Image
                   source={require("../../assets/icons/cart.png")}
                   style={styles.headerIcon}
                 />
               </Pressable> 
-              <Pressable onPress={() => alert("Cart Pressed")}>
+              <Pressable onPress={() => alert("Notif Pressed")}>
                 <Image
                   source={require("../../assets/icons/notif.png")}
                   style={styles.headerIcon}
@@ -211,7 +211,7 @@ const Home = () => {
                   Get your online ticket now to enjoy ride without any hassle.
                 </Text>
           
-                <Pressable onPress={() => alert("View rides pressed!")}>
+                <Pressable onPress={() => router.push('../../Ride/ride')}>
                   <Text style={styles.viewRidesText}>View Rides →</Text>
                 </Pressable>
               </View>
@@ -227,7 +227,7 @@ const Home = () => {
       
         <Pressable
               style={styles.fixedBookNow}
-              onPress={() => alert("Book Now pressed!")}
+              onPress={() => router.push('../EntranceTicket/enticket')}
           >
             <Text style={styles.bookNowText}>BOOK NOW</Text>
           </Pressable>

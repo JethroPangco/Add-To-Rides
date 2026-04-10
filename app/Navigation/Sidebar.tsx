@@ -1,10 +1,32 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, Image, Pressable } from "react-native";
 import styles from "../Home/home.styles";
 import { useRouter } from "expo-router";
 
+import { ref, onValue } from "firebase/database";
+import { auth, db } from "../../src/config/firebaseConfig";
+
 const Sidebar = ({ btnLogout }) => {
   const router = useRouter();
+
+  const [username, setUsername] = useState("User");
+  const [image, setImage] = useState(null);
+
+  useEffect(() => {
+    if (!auth.currentUser) return;
+  
+    const userRef = ref(db, "users/" + auth.currentUser.uid);
+  
+    const unsubscribe = onValue(userRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        setUsername(data.username || "User");
+        setImage(data.profileImg || null);
+      }
+    });
+  
+    return () => unsubscribe();
+  }, []);
     
     return (
         <View style={styles.sidebar}>
@@ -15,63 +37,74 @@ const Sidebar = ({ btnLogout }) => {
        />
 
        <View style={styles.sidebarUser}>
-         <Image
-           source={require("../../assets/icons/user-profile.png")}
-           style={styles.sidebarAvatar}
-         />
-         <Text style={styles.sidebarUsername}>User Name</Text>
+         { image ? (
+          <Image
+            source={{uri : image}}
+            style={[styles.sidebarAvatar, {borderRadius: 50, borderWidth: 2}]}
+          />
+         ) : (
+          <Image
+            source={require("../../assets/icons/user-profile.png")}
+            style={styles.sidebarAvatar}
+          />
+         )}
+         <Text style={styles.sidebarUsername}>@{username}</Text>
        </View>
 
-       <View style={styles.sidebarDivider} />
+      <View style={styles.sidebarDivider} />
 
-       <Pressable style={styles.sidebarMenu}  onPress={() => router.push('../../Home/home')}>
-         <Image source={require("../../assets/icons/home-icon.png")} style={styles.sidebarIcon}/>
-         <Text style={styles.sidebarMenuText}>Home</Text>
-       </Pressable>
+        <Pressable style={styles.sidebarMenu}  onPress={() => router.push('../../Home/home')}>
+          <Image source={require("../../assets/icons/home-icon.png")} style={styles.sidebarIcon}/>
+          <Text style={styles.sidebarMenuText}>Home</Text>
+        </Pressable>
 
-       <Pressable style={styles.sidebarMenu}  onPress={() => alert("Entrance Ticket Pressed")}>
-         <Image source={require("../../assets/icons/ent-ticket.png")} style={styles.sidebarIcon}/>
-         <Text style={styles.sidebarMenuText}>Entrance Ticket</Text>
-       </Pressable>
+        <Pressable style={styles.sidebarMenu}  onPress={() => router.push('../EntranceTicket/enticket')}>
+          <Image source={require("../../assets/icons/ent-ticket.png")} style={styles.sidebarIcon}/>
+          <Text style={styles.sidebarMenuText}>Entrance Ticket</Text>
+        </Pressable>
 
-       <Pressable style={styles.sidebarMenu} onPress={() => router.push('../../Ride/ride')}>
-         <Image source={require("../../assets/icons/ride-reserv.png")} style={styles.sidebarIcon}/>
-         <Text style={styles.sidebarMenuText}>Ride Reservation</Text>
-       </Pressable>
+        <Pressable style={styles.sidebarMenu} onPress={() => router.push('../../Ride/ride')}>
+          <Image source={require("../../assets/icons/ride-reserv.png")} style={styles.sidebarIcon}/>
+          <Text style={styles.sidebarMenuText}>Ride Reservation</Text>
+        </Pressable>
 
-       <Pressable style={styles.sidebarMenu} onPress={() => alert("Reward System Pressed")}>
-         <Image source={require("../../assets/icons/reward.png")} style={styles.sidebarIcon}/>
-         <Text style={styles.sidebarMenuText}>Reward System</Text>
-       </Pressable>
+        <Pressable style={styles.sidebarMenu} onPress={() => router.push('../Reward/reward')}>
+          <Image source={require("../../assets/icons/reward.png")} style={styles.sidebarIcon}/>
+          <Text style={styles.sidebarMenuText}>Reward System</Text>
+        </Pressable>
 
-       <Pressable style={styles.sidebarMenu} onPress={() => router.push('../../UserProfile/user')} >
-         <Image source={require("../../assets/icons/user-setting.png")} style={styles.sidebarIcon}/>
-         <Text style={styles.sidebarMenuText}>User Profile</Text>
-       </Pressable>
+        <Pressable style={styles.sidebarMenu} onPress={() => router.push('../../UserProfile/user')} >
+          <Image source={require("../../assets/icons/user-setting.png")} style={styles.sidebarIcon}/>
+          <Text style={styles.sidebarMenuText}>User Profile</Text>
+        </Pressable>
 
-       <View style={styles.sidebarDivider} />
+        <View style={styles.sidebarDivider} />
 
-       <Text style={styles.sidebarSection}>Other options</Text>
+        <Text style={styles.sidebarSection}>Other options</Text>
 
-       <Text style={styles.sidebarSub}>My Bookings</Text>
-       <Text style={styles.sidebarSub}>My Schedule</Text>
-       <Text style={styles.sidebarSub}>Vouchers</Text>
-       <Text style={styles.sidebarSub}>Lost & Found</Text>
+        <Pressable style={styles.sidebarMenu} onPress={() => router.push('../../BookingHistory/history')} >
+          <Text style={styles.sidebarSub}>My Bookings</Text>
+        </Pressable>
 
-       <Pressable style={styles.sidebarMenu} onPress={() => router.push('../CustServ/custServ')} >
-          <Text style={{marginTop: 20, fontWeight: "500", fontSize: 16}}>Customer Service</Text>
-       </Pressable>
+        <Pressable style={styles.sidebarMenu} onPress={() => router.push('../../MySched/mysched')}>
+          <Text style={styles.sidebarSub}>My Schedule</Text>
+        </Pressable>
+        
 
-       <Pressable style={styles.sidebarMenu}>
-          <Text style={{fontWeight: "500", fontSize: 16}}>About Us </Text>
-       </Pressable>
-       
-       {/* Logout */}
-       <Pressable style={styles.sidebarMenuLogout} onPress={btnLogout}>
-         <Image source={require("../../assets/icons/logout.png")} style={styles.sidebarIcon}/>
-         <Text style={styles.sidebarMenuText}>Logout</Text>
-       </Pressable>
-        </View>
+        <Pressable style={styles.sidebarMenu} onPress={() => router.push('../CustServ/custServ')} >
+            <Text style={{marginTop: 20, fontWeight: "500", fontSize: 16}}>Customer Service</Text>
+        </Pressable>
+
+        <Pressable style={styles.sidebarMenu} onPress={() => router.push('../../About/about')} >
+            <Text style={{fontWeight: "500", fontSize: 16}}>About Us </Text>
+        </Pressable>
+        
+        {/* Logout */}
+        <Pressable style={styles.sidebarMenuLogout} onPress={btnLogout}>
+          <Image source={require("../../assets/icons/logout.png")} style={styles.sidebarIcon}/>
+          <Text style={styles.sidebarMenuText}>Logout</Text>
+        </Pressable>
+      </View>
 
     );
 };

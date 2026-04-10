@@ -1,7 +1,11 @@
 import React, { useState } from "react";
-import { View, Image, Text, Pressable, TextInput } from "react-native";
+import { View, Image, Text, Pressable, TextInput, Alert } from "react-native";
 import { useRouter } from "expo-router";
-import styles from "./SignUp-mod.styles" ;
+import styles from "./SignUp-mod.styles";
+
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { ref, set } from "firebase/database";
+import { auth, db } from "../../src/config/firebaseConfig";
 
 const SignUp = () => {
     const router = useRouter();
@@ -67,21 +71,75 @@ const SignUp = () => {
         return Object.keys(errors).length === 0;
     };
 
-        const nextStep = () => {
-            if (step < 5) {
-                setErrors ({});
-                setStep(step + 1);
-            }
-            else {
-                router.push('../../Home/home');
-            }
-        };
-    
-        const prevStep = () => {
-            if (step > 0) 
-                setStep(step - 1);
-        };
+    const nextStep = () => {
+        if (step < 5) {
+            setErrors({});
+            setStep(step + 1);
+        } else {
+            router.push('../../Login/Login');
+        }
+    };
 
+    const prevStep = () => {
+        if (step > 0) setStep(step - 1);
+    };
+
+    const handleSignup = async () => {
+
+        if (!username || !email || !phoneNum || !password || !confirmPass) {
+            console.log("Missing fields");
+            return;
+        }
+
+        if (!email.includes("@")) {
+            console.log("Invalid email");
+            return;
+        }
+
+        if (password.length < 6) {
+            console.log("Weak password");
+            return;
+        }
+
+        if (password !== confirmPass) {
+            console.log("Passwords do not match");
+            return;
+        }
+
+        try {
+            const userCredential = await createUserWithEmailAndPassword(
+                auth,
+                email.trim(),  
+                password
+            );
+
+            const user = userCredential.user;
+
+            await set(ref(db, "users/" + user.uid), {
+                username: username,
+                email: email,
+                phone: phoneNum
+            });
+            
+            Alert.alert(
+                "Success",
+                "Account successfully created!",
+                [
+                    {
+                        text: "OK",
+                        onPress: () => router.replace('../../Home/home'), 
+                    },
+                ],
+                { cancelable: false }
+            );
+
+        } catch (error: any) {
+            console.log("FIREBASE ERROR:", error.code, error.message);
+            Alert.alert("Error", error.message); 
+        }
+    };
+
+    
     return (
         <View style={styles.container}>
        
@@ -259,7 +317,7 @@ const SignUp = () => {
       
         {step === 5 && (
             <>
-                <Pressable onPress={() => router.push('../../Home/home')} style={styles.createBtn}>
+                <Pressable onPress={handleSignup} style={styles.createBtn}>
                     <Text style={styles.createBtnText}>Start</Text>
                 </Pressable>
             </> 
