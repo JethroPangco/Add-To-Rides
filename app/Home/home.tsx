@@ -238,6 +238,8 @@ const Home = () => {
           pagingEnabled
           showsHorizontalScrollIndicator={false}
           keyExtractor={(_, index) => index.toString()}
+          bounces={false}                 // 👈 prevents edge peek
+  overScrollMode="never"    
           renderItem={({ item }) => (
             <Image
               source={item}

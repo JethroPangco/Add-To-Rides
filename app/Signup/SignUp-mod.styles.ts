@@ -141,5 +141,28 @@ export default StyleSheet.create({
         color: "#FF0000",
         marginBottom: 10,
         fontStyle: "italic"
+    },
+
+    modalBg: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.6)",
+        justifyContent: "center",
+        alignItems: "center"
+    },
+
+    modalContainer: {
+        width: "90%",
+        height: "85%",
+        backgroundColor: "#fff",
+        borderRadius: 15,
+        padding: 20
+    },
+
+    closeBtn: {
+        marginTop: 20,
+        backgroundColor: "#87cbde",
+        padding: 12,
+        borderRadius: 10,
+        alignItems: "center"
     }
 });

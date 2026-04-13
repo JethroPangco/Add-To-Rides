@@ -10,8 +10,9 @@ export default [
       duration: "5-7 minutes",
       image: require("../../assets/exciting/wheel-of-fate.jpg"),
       price: 100,
-      descrip: "Giant Ferris wheel offering a relaxing view of the park."
-      
+      points: 50,
+      descrip: "Giant Ferris wheel offering a relaxing view of the park.",
+     
     },
     {
       id: "2",
@@ -23,6 +24,7 @@ export default [
       duration: "3-4 minutes",
       image: require("../../assets/exciting/jungle-log.jpg"),
       price: 100,
+      points: 50,
       descrip: "Water log ride with gentle drops and splashes."
     },
     {
@@ -35,6 +37,7 @@ export default [
       duration: "4-5 minutes",
       image: require("../../assets/exciting/rio-grande.jpg"),
       price: 100,
+      points: 50,
       descrip: "River rafting adventure with mild rapids."
     },
     {
@@ -48,6 +51,7 @@ export default [
       duration: "2-3 minutes",
       image: require("../../assets/exciting/carousel.png"),
       price: 100,
+      points: 50,
       descrip: "Classic carousel with horses and gentle motion."
     },
 
@@ -61,6 +65,7 @@ export default [
       duration: "2-3 minutes",
       image: require("../../assets/exciting/air-pterodactyle.jpg"),
       price: 100,
+      points: 50,
       descrip: "Kid-friendly airplane ride with circular motion."
     },
     {
@@ -73,6 +78,7 @@ export default [
       duration: "10-15 minutes",
       image: require("../../assets/exciting/rialto.jpg"),
       price: 100,
+      points: 50,
       descrip: "Indoor cinema attraction featuring short animated or adventure films with visual effects."
     },
 
@@ -86,7 +92,8 @@ export default [
       duration: "10 minutes",
       image: require("../../assets/exciting/agila.png"),
       price: 100,
-      descrip: "River rafting adventure with mild rapids."
+      points: 50,
+      descrip: "Soaring aerial ride showcasing scenic views from above."
     },
     {
       id: "8",
@@ -97,8 +104,9 @@ export default [
       height: "109 cm minimum",
       duration: "3-4 minutes",
       image: require("../../assets/exciting/up-away.jpg"),
-      price: 100,      
-      descrip: "River rafting adventure with mild rapids."
+      price: 100,
+      points: 50,      
+      descrip: "Hot air balloon ride with calm panoramic sky views."
     },
 
     //Thrilling
@@ -111,7 +119,8 @@ export default [
       height: "122 cm minimum",
       duration: "2-3 minutes",
       image: require("../../assets/thrilling/eklipse.jpg"),
-      price: 120,      
+      price: 120, 
+      points: 100,     
       descrip: "A spinning ride that swings riders in multiple directions."
     },
     {
@@ -123,7 +132,8 @@ export default [
       height: "117 cm minimum",
       duration: "3-4 minutes",
       image: require("../../assets/thrilling/ekstreme.png"),
-      price: 120,      
+      price: 120, 
+      points: 100,     
       descrip: "A vertical drop tower delivering an intense free-fall experience."
     },
     {
@@ -135,7 +145,8 @@ export default [
       height: "122 cm minimum",
       duration: "2-3 minutes",
       image: require("../../assets/thrilling/anchors-away.png"),
-      price: 120,      
+      price: 120, 
+      points: 100,     
       descrip: "A giant swinging ship ride that moves back and forth at increasing heights."
     },
     {
@@ -147,7 +158,8 @@ export default [
       height: "107 cm minimum",
       duration: "2 minutes",
       image: require("../../assets/thrilling/roller-skater.jpg"),
-      price: 120,      
+      price: 120, 
+      points: 100,     
       descrip: "A beginner-friendly roller coaster with smooth turns and drops."
     },
     {
@@ -159,7 +171,8 @@ export default [
       height: "122 cm minimum",
       duration: "3 minutes",
       image: require("../../assets/thrilling/flying.jpg"),
-      price: 120,      
+      price: 120, 
+      points: 100,     
       descrip: "A rotating swing ride that lifts riders high into the air."
     },
     {
@@ -171,7 +184,8 @@ export default [
       height: "122 cm minimum",
       duration: "2-3 minutes",
       image: require("../../assets/thrilling/air-race.jpg"),
-      price: 120,      
+      price: 120, 
+      points: 100,     
       descrip: "A high-speed ride that spins riders in full 360-degree rotations."
     },
     {
@@ -183,7 +197,8 @@ export default [
       height: "122 cm minimum",
       duration: "2-3 minutes",
       image: require("../../assets/thrilling/twin-spin.jpg"),
-      price: 120,      
+      price: 120, 
+      points: 100,     
       descrip: "A double-arm spinning ride with fast and unpredictable motion."
     },
     {
@@ -195,7 +210,8 @@ export default [
       height: "122 cm minimum",
       duration: "3 minutes",
       image: require("../../assets/thrilling/bump.jpg"),
-      price: 120,      
+      price: 120, 
+      points: 100,     
       descrip: "A bumper boat ride combining water fun and light collisions."
     },
     
@@ -210,6 +226,7 @@ export default [
       duration: "2 minutes",
       image: require("../../assets/extreme/space-shuttle.jpg"),
       price: 150,
+      points: 150,
       descrip: "A spinning ride that swings riders in multiple directions."
     },
     {
@@ -222,6 +239,7 @@ export default [
       duration: "3-4 minutes",
       image: require("../../assets/extreme/ekstreme.png"),
       price: 150,
+      points: 150,
       descrip: "A vertical drop tower delivering an intense free-fall experience."
     },
     {
@@ -234,6 +252,7 @@ export default [
       duration: "2-3 minutes",
       image: require("../../assets/extreme/disk.jpg"),
       price: 150,
+      points: 150,
       descrip: "A spinning disk ride that glides along a curved track while rotating riders in thrilling motion."
     },
     {
@@ -246,6 +265,7 @@ export default [
       duration: "5-7 minutes",
       image: require("../../assets/extreme/fun-kart.jpg"),
       price: 150,
+      points: 150,
       descrip: "A fast-paced go-kart experience where riders race around a winding track for fun and excitement."
     },
     {
@@ -258,6 +278,7 @@ export default [
       duration: "10-15 minutes",
       image: require("../../assets/extreme/xpp01.jpg"),
       price: 150,
+      points: 150,
       descrip: "An action-packed shooting game where players compete in teams using paintball markers in a tactical arena."
     },
     {
@@ -270,6 +291,7 @@ export default [
       duration: "2-3 minutes",
       image: require("../../assets/extreme/air-race.jpg"),
       price: 150,
+      points: 150,
       descrip: "A high-speed ride that spins riders in full 360-degree rotations."
     },
     {
@@ -282,6 +304,7 @@ export default [
       duration: "2-3 minutes",
       image: require("../../assets/extreme/twin-spin.jpg"),
       price: 150,
+      points: 150,
       descrip: "A double-arm spinning ride with fast and unpredictable motion."
     },
   ];

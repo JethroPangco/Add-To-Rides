@@ -6,7 +6,7 @@ import { useRouter } from "expo-router";
 import { ref, onValue } from "firebase/database";
 import { auth, db } from "../../src/config/firebaseConfig";
 
-const Sidebar = ({ btnLogout }) => {
+const Sidebar = ({ btnLogout }: any) => {
   const router = useRouter();
 
   const [username, setUsername] = useState("User");

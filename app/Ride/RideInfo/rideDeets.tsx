@@ -63,6 +63,8 @@ const RideDetails = () => {
           <Text style={styles.details}>{ride.height}</Text>
           <Text style={styles.detailHeader}>DURATION:</Text>
           <Text style={styles.details}>{ride.duration}</Text>
+          <Text style={styles.detailHeader}>POINT EQUIVALENT:</Text>
+          <Text style={styles.details}>+{ride.points}</Text>
         </View>
       </ScrollView>
 

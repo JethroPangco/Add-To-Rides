@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Add_To_Ride",
-    "slug": "Add_To_Ride",
+    "slug": "add_to_ride",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/add-to-rides-blue.png",
@@ -37,7 +37,8 @@
           }
         }
       ],
-      "expo-font"
+      "expo-font",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,

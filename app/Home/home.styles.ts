@@ -203,7 +203,6 @@ export default StyleSheet.create({
         resizeMode: "contain"
     },
   
-    /* Book Now fixed */
     fixedBookNow: {
       position: "absolute",
       bottom: 90,
