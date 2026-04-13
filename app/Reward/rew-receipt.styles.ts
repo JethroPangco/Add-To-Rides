@@ -1,13 +1,14 @@
 import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
-   
-    scroll: {
-        padding: 40,
-        
-        backgroundColor: "#595959"
-    },
+    container: {
+        flex: 1,
+        margin: 0,
+        padding: 20,
+        backgroundColor: "#595959",
 
+    },
+    
     divider: {
         borderWidth: 0.4,
         backgroundColor: "#000",
@@ -20,12 +21,6 @@ export default StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         alignSelf: "center"
-    },
-
-    logo: {
-        height: 70,
-        width: 70,
-        opacity: 0.5
     },
     
     title: { 
@@ -55,7 +50,7 @@ export default StyleSheet.create({
 
     qrCode: {
         alignItems: "center",
-        paddingLeft: 3
+        margin: 10
     },
     
     uniqueRef: {
@@ -96,10 +91,10 @@ export default StyleSheet.create({
     ticketWrapper: {
         backgroundColor: "#fff",
         margin: 5,
+        marginTop: 50,
         borderRadius: 15,
         overflow: "hidden",
         position: "relative",
-
         elevation: 6,
         shadowColor: "#000",
         shadowOpacity: 0.2,
@@ -114,7 +109,7 @@ export default StyleSheet.create({
 
     qrBox: {
         alignItems: "center",
-        marginBottom: 10
+        margin: 15
     },
 
     cutLeft: {
@@ -138,4 +133,6 @@ export default StyleSheet.create({
         backgroundColor: "#595959",
         borderRadius: 100,
     },
-  });
+
+    
+});

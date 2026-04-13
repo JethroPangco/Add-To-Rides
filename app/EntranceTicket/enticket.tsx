@@ -180,9 +180,21 @@ const EntranceTicket = () => {
             if (snapshot.exists()) {
                 entranceTicket = snapshot.val().entranceTicket || [];
             }
-        
+            
+            const schedDate = new Date(date);
+
+            const validFrom = new Date(schedDate);
+            validFrom.setHours(11, 0, 0);
+
+            const validUntil = new Date(schedDate);
+            validUntil.setHours(20, 0, 0);
+
             const newBooking = {
-                date: date?.toDateString(),
+                date: schedDate.toDateString(),
+                
+                validFrom: validFrom.toISOString(),
+                validUntil: validUntil.toISOString(),
+                
                 tickets: selectedTickets,
                 totalPrice,
                 createdAt: new Date().toISOString(),
@@ -314,7 +326,7 @@ const EntranceTicket = () => {
                         value={date || new Date()}
                         mode="date"
                         display="calendar"
-                        onChange={(_, selectedDate) => {
+                        onValueChange={(_, selectedDate) => {
                             setShowDatePicker(false);
                             if (selectedDate) setDate(selectedDate);
                         }}

@@ -22,6 +22,8 @@ const UserProfile = () => {
 
     const [firebaseUsername, setFirebaseUsername] = useState("");
 
+    const [allowEdit, setAllowEdit] = useState(false);
+
     useEffect(() => {
         const loadProfile = async () => {
             if (!auth.currentUser) return;
@@ -41,7 +43,7 @@ const UserProfile = () => {
                     setBDate(data.bDate || "");
                     setImage(data.profileImg || null);
 
-                    setFirebaseUsername(data.username || "user");
+                    setFirebaseUsername(data.fName || "user");
                 }
             } catch (error: any) {
                 console.log("FIREBASE ERROR:", error.code, error.message);
@@ -110,49 +112,63 @@ const UserProfile = () => {
                         />
                     </Pressable>
 
-                    <Pressable onPress={pickImage}>
-                        {image ? (
+                    <Pressable onPress={allowEdit ? pickImage : null}>
+                        { image ? (
                             <Image source={{ uri: image }} style={styles.avatar} />
                         ) : (
                             <View style={styles.avatar}>
                                 <Text style={styles.initial}>{getIniName()}</Text>
                             </View>
                         )}
+
+                        {allowEdit && image && (
+                            <Pressable
+                                onPress={() => setImage(null)}
+                                style={{ marginTop: 10 }}
+                            >
+                                <Text style={{ color: "red", textAlign: "center", fontWeight: "bold" }}>
+                                    Remove
+                                </Text>
+                            </Pressable>
+                        )}
                     </Pressable>
 
-                    <Text style={styles.hello}>Hello, @{firebaseUsername || "user"}!</Text>
+                    <Text style={styles.hello}>Hello, {firebaseUsername || "user"}!</Text>
                 </View>
 
                 <View style={styles.form}>
                     <Text style={styles.label}>Username</Text>
                     <TextInput
-                        style={styles.input}
+                        style={[styles.input, {color: allowEdit ? "#000" : "#909090"}]}
                         value={username}
                         onChangeText={setUsername}
+                        editable={allowEdit}
                         placeholder="Enter username"
                     />
 
                     <Text style={styles.label}>First Name</Text>
                     <TextInput
-                        style={styles.input}
+                        style={[styles.input, {color: allowEdit ? "#000" : "#909090"}]}
                         value={fName}
                         onChangeText={setFName}
+                        editable={allowEdit}
                         placeholder="Enter first name"
                     />
 
                     <Text style={styles.label}>Last Name</Text>
                     <TextInput
-                        style={styles.input}
+                        style={[styles.input, {color: allowEdit ? "#000" : "#909090"}]}
                         value={lName}
                         onChangeText={setLName}
+                        editable={allowEdit}
                         placeholder="Enter last name"
                     />
 
                     <Text style={styles.label}>Email</Text>
                     <TextInput
-                        style={styles.input}
+                        style={[styles.input, {color: allowEdit ? "#000" : "#909090"}]}
                         value={email}
-                        onChangeText={setEmail}
+                        editable={false}
                         placeholder="Enter email address"
                         autoCapitalize="none"
                         keyboardType="email-address"
@@ -160,18 +176,18 @@ const UserProfile = () => {
 
                     <Text style={styles.label}>Phone Number</Text>
                     <TextInput
-                        style={styles.input}
+                        style={[styles.input, {color: allowEdit ? "#000" : "#909090"}]}
                         value={phoneNum}
                         onChangeText={(text) => setPhoneNum(text.replace(/[^0-9]/g, "").slice(0, 11))}
                         keyboardType="numeric"
                         placeholder="Enter phone number"
+                        editable={allowEdit}
                     />
 
                     <Text style={styles.label}>Birth Date</Text>
-
-                    <Pressable onPress={() => setShowDatePicker(true)}>
+                    <Pressable onPress={allowEdit ? () => setShowDatePicker(true) : null}>
                         <TextInput
-                            style={styles.input}
+                            style={[styles.input, {color: allowEdit ? "#000" : "#909090"}]}
                             value={bDate}
                             onChangeText={setBDate}
                             placeholder="Birth Date"
@@ -202,8 +218,14 @@ const UserProfile = () => {
                         />
                     )}    
 
-                    <Pressable style={styles.saveBtn} onPress={saveProfile}>
-                        <Text style={styles.saveText}>Save Profile</Text>
+                    <Pressable style={[styles.saveBtn, {backgroundColor: allowEdit ? "#28b1ff" : "#a10000"}]} 
+                        onPress={() => {
+                            if (allowEdit) {
+                                saveProfile();
+                            }  
+                            setAllowEdit(!allowEdit);
+                        }}>
+                        <Text style={styles.saveText}>{allowEdit ? "Save Profile" : "Edit"}</Text>
                     </Pressable>
                 </View>
             </ScrollView>

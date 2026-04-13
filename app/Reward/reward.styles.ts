@@ -113,6 +113,7 @@ export default StyleSheet.create({
     pointsDesc: {
         textAlign: "center",
         fontSize: 14,
+        fontWeight: "bold"
     },
 
     /* SECTION */
@@ -125,7 +126,7 @@ export default StyleSheet.create({
         height: 1, 
         backgroundColor: "#000", 
         marginVertical: 10,
-        marginBottom: 20    
+        marginBottom: 5    
     },
 
     /* REWARD CARD */
@@ -164,9 +165,13 @@ export default StyleSheet.create({
     },
 
     rewardBtn: {
-        padding: 8,
-        borderRadius: 8,
+        padding: 10,
+        borderRadius: 5,
         alignItems: "center",
+        marginVertical: 20,
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+        backgroundColor: "#02dc35",
+        elevation: 2
     },
 
     rewardBtnText: {
@@ -174,6 +179,29 @@ export default StyleSheet.create({
         fontWeight: "700",
     },
     
+    redeemIndicator: {
+        padding: 5,
+        textAlign: "center",
+        borderRadius: 100
+    },
+
+    redeemQty: {
+        flexDirection: "row", 
+        alignItems: "center", 
+        marginTop: 5,
+        justifyContent: "center",
+        marginBottom: 10
+    },
+    
+    qtyBtn: {
+        backgroundColor: "#004497",
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        color: "#fff",
+        fontWeight: "bold",
+        borderRadius: 50
+    }, 
+
     addBtn: {
         marginTop: 10,
         backgroundColor: "#87cbde",

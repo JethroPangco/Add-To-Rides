@@ -9,7 +9,8 @@ import {
   Animated,
   PanResponder,
   Dimensions,
-  ImageBackground
+  ImageBackground,
+  Alert
 } from "react-native";
 import styles from "./reward.styles";
 import Sidebar from "../Navigation/Sidebar";
@@ -105,62 +106,197 @@ const Reward = () => {
   ];  
   
   const [points, setPoints] = useState(0);
+  const [redeemedMap, setRedeemedMap] = useState<Record<string, boolean>>({});
 
   React.useEffect(() => {
+
     const loadPoints = async () => {
       const total = await fetchPoints();
       setPoints(total);
     };
+  
     loadPoints();
+    
+    const loadRedeemed = async () => {
+      const userId = auth.currentUser?.uid;
+      if (!userId) return;
+  
+      const snap = await get(ref(db, `redeemedRewards/${userId}`));
+  
+      let map: Record<string, boolean> = {};
+  
+      if (snap.exists()) {
+        const data = snap.val();
+  
+        Object.values(data).forEach((reward: any) => {
+          reward.items?.forEach((item: any) => {
+            map[item.name] = true; 
+          });
+        });
+      }
+  
+      setRedeemedMap(map);
+    };
+  
+    loadRedeemed();
+
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (!user) return;
+  
+      const total = await fetchPoints();
+      setPoints(total);
+      loadRedeemed();
+    });
+  
+    return unsubscribe;
   }, []);
 
   const fetchPoints = async () => {
     if (!auth.currentUser) return 0;
+
     const userId = auth.currentUser.uid;
-  
-    const snapPoints = await get(ref(db, `transaction/${userId}`));
-    let totalPoints = 0;
-  
-    if (snapPoints.exists()){
+
+    const [snapPoints, redeemSnap] = await Promise.all([
+      get(ref(db, `transaction/${userId}`)),
+      get(ref(db, `redeemedRewards/${userId}`))
+    ]);
+
+    let earned = 0;
+    let spent = 0;
+
+    if (snapPoints.exists()) {
       const transaction = Object.values(snapPoints.val());
-      totalPoints = transaction.reduce((sum: number, t: any) => sum + (t.ridesTicket?.totalPoints || 0), 0);
+
+      earned = transaction.reduce(
+        (sum: number, t: any) =>
+          sum + (t.ridesTicket?.totalPoints || 0),
+        0
+      );
     }
-  
-    const redeemSnap = await get(ref(db, `redeemedRewards/${userId}`));
+
     if (redeemSnap.exists()) {
       const redeemed = Object.values(redeemSnap.val());
-      const redeemedPoints = redeemed.reduce((sum: number, r: any) => sum + (r.pointsUsed || 0), 0);
-      totalPoints -= redeemedPoints; 
+
+      spent = redeemed.reduce(
+        (sum: number, r: any) =>
+          sum + (r.totalPointsUsed || r.pointsUsed || 0),
+        0
+      );
+    }
+
+    return Math.max(0, earned - spent);
+  };
+  
+  const handleRedeem = async () => {
+    const userId = auth.currentUser?.uid;
+    if (!userId) return;
+  
+    const selectedItems = rewards
+      .filter(item => !item.comingSoon && (quantities[item.id] || 0) > 0)
+      .map(item => ({
+        name: item.name,
+        quantity: quantities[item.id],
+        cost: item.points,
+        total: (item.points || 0) * (quantities[item.id] || 0),
+        status: "redeemed"
+      }));
+  
+    if (selectedItems.length === 0) {
+      alert("Select at least 1 item");
+      return;
     }
   
-    return totalPoints;
-  };
-
-  const handleRedeem = async (itemName: string, cost: number) => {
-    const userId = auth.currentUser?.uid;
-    if(!userId) return;
-
-    const totalPoints = await fetchPoints();
-    if (totalPoints < cost) {
+    const totalCost = selectedItems.reduce((sum, i) => sum + i.total, 0);
+    const currentPoints = await fetchPoints();
+  
+    if (currentPoints < totalCost) {
       alert("Not enough points");
       return;
     }
-    
-    const confirmationCode = `RR-${Date.now()}-ATR-${Math.floor(Math.random() * 99)}`;
-    const redeemedAt = new Date().toISOString();
+
+    const now = new Date();
+    const hour = now.getHours();
+
+    if (hour < 11 || hour >= 20) {
+      alert("You can only redeem between 11:00 AM and 8:00 PM");
+      return;
+    }
   
-    const newRef = push(ref(db, `redeemedRewards/${userId}`));
-    await set(newRef, {
-      itemName,
-      pointsUsed: cost,
-      redeemedAt,
-      confirmationCode,
+    Alert.alert(
+      "Confirm Redemption",
+      `Redeem ${selectedItems.length} item(s)?`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Yes",
+          onPress: async () => {
+            const refNum = `RR-${Date.now()}`;
+
+            const redeemedAt = new Date();
+            const expiresAt = new Date();
+            expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+
+            const remaining = currentPoints - totalCost;
+            
+            const itemChecks = await Promise.all(
+              selectedItems.map(item =>
+                get(ref(db, `redeemedItems/${userId}/${item.name}`))
+              )
+            );
+            
+            const alreadyRedeemed = itemChecks.some(snap => snap.exists());
+            
+            if (alreadyRedeemed) {
+              Alert.alert("Error", "One or more items already redeemed.");
+              return;
+            }
+
+            const newRef = push(ref(db, `redeemedRewards/${userId}`));
+  
+            await set(newRef, {
+              items: selectedItems.map(i => ({
+                ...i,
+                status: "redeemed",
+              })),
+              totalPointsUsed: totalCost,
+              remainingPoints: remaining,
+              redeemedAt: redeemedAt.toISOString(),
+              expiresAt: expiresAt.toISOString(),
+              refNo: refNum,
+            });
+
+            for (const item of selectedItems) {
+              await set(ref(db, `redeemedItems/${userId}/${item.name}`), {
+                status: "redeemed",
+                redeemedAt: redeemedAt.toISOString(),
+                expiresAt: expiresAt.toISOString(),
+              });
+            }
+  
+            setPoints(remaining);
+            setQuantities({});
+  
+            router.push({
+              pathname: "./rew-receipt",
+              params: { ref: newRef.key }
+            });
+          }
+        }
+      ]
+    );
+  };
+  
+  const [quantities, setQuantities] = useState<Record<number, number>>({});
+  const changeQty = (id: number, increment: boolean) => {
+    setQuantities(prev => {
+      const current = prev[id] || 0;
+      let value = increment ? current + 1 : current - 1;
+  
+      if (value < 0) value = 0;
+      if (value > 1) value = 1;
+  
+      return { ...prev, [id]: value };
     });
-
-    const total = await fetchPoints();
-    setPoints(total);
-
-    alert(`Redeemed successfully! Confirmation: ${confirmationCode}`);
   };
 
   return (
@@ -224,8 +360,18 @@ const Reward = () => {
         <View style={{margin: 30}}>
           <Text style={styles.sectionTitle}>Redeem Center</Text>
           
+          
           <View style={styles.divider} />
-      
+          
+          <Pressable
+              style={styles.rewardBtn}
+            onPress={handleRedeem}
+          >
+            <Text style={styles.rewardBtnText}>
+              REDEEM ALL
+            </Text>
+          </Pressable>
+
           {rewards.map((item) => {
 
           if (item.comingSoon) {
@@ -241,7 +387,9 @@ const Reward = () => {
             );
           }
 
-          const canRedeem = item.points && points >= item.points;
+          const isRedeemed = redeemedMap[item.name];
+          const canRedeem = item.points && points >= item.points && !isRedeemed;
+          
           return (
             <View key={item.id} style={styles.rewardCard}>
               
@@ -253,17 +401,28 @@ const Reward = () => {
                   {item.points} Points
                 </Text>
 
-                <Pressable
-                  style={[
-                    styles.rewardBtn,
-                    { backgroundColor: canRedeem ? "#02dc35" : "#dc0202" },
-                  ]}
-                  onPress={() => handleRedeem(item.name!, item.points!)}
-                >
-                  <Text style={styles.rewardBtnText}>
-                    {canRedeem ? "REDEEM" : "EARN MORE"}
+                <View style={styles.redeemQty}>
+                  <Pressable onPress={() => !redeemedMap[item.name] && changeQty(item.id, false)}
+                    disabled={redeemedMap[item.name]}>
+                    <Text style={styles.qtyBtn}>-</Text>
+                  </Pressable>
+
+                  <Text style={{ marginHorizontal: 10, color: "#fff", fontWeight: "bold"}}>
+                    {quantities[item.id] || 0}
                   </Text>
-                </Pressable>
+
+                  <Pressable onPress={() => !redeemedMap[item.name] && changeQty(item.id, true)}
+                      disabled={redeemedMap[item.name]}>
+                    <Text style={styles.qtyBtn}>+</Text>
+                  </Pressable>
+                </View>
+
+                  <Text style={[styles.redeemIndicator, styles.rewardBtnText, { backgroundColor: isRedeemed ? "#555" : canRedeem ? "#02dc35" : "#dc0202"}]}>
+                    STATUS: { isRedeemed ? "Redeemed"
+                               : canRedeem ? "Redeemable" : "Earn More"
+                            }
+                  </Text>
+
               </View>
             </View>
           );

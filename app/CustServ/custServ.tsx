@@ -1,11 +1,49 @@
 import * as React from "react";
-import { ScrollView, View, Text, Pressable, Image, TextInput } from "react-native";
+import { ScrollView, View, Text, Pressable, Image, TextInput, Alert } from "react-native";
 import styles from "./custServ.styles";
 import { useRouter } from "expo-router";
 import BottomNav from "../Navigation/BottomNav";
 
+import { auth, db } from "../../src/config/firebaseConfig";
+import { ref, push, set } from "firebase/database";
+
 const CustomerService = () => {
     const router = useRouter();
+
+    const [email, setEmail] = React.useState("");
+    const [subject, setSubject] = React.useState("");
+    const [message, setMessage] = React.useState("");
+
+    React.useEffect(() => {
+        const user = auth.currentUser;
+        if (user?.email) {
+            setEmail(user.email);
+        }
+    }, []);
+
+
+    const handleSubmit = async () => {
+        const userId = auth.currentUser?.uid;
+
+        if (!email || !subject || !message) {
+            Alert.alert("Error", "Please fill all fields");
+            return;
+        }
+
+        const msgRef = push(ref(db, `custServ/${userId}`));
+
+        await set (msgRef, {
+            email,
+            subject,
+            message,
+            createdAt: new Date().toISOString()
+        });
+
+        Alert.alert("Success", "Message submitted!");
+
+        setSubject("");
+        setMessage("");
+    }
 
     return (
         <View style={styles.container}>
@@ -37,6 +75,8 @@ const CustomerService = () => {
                     <Text style={styles.label}>Email</Text>
                     <TextInput 
                         style={styles.input}
+                        value={email}
+                        editable={false}
                         placeholder="e.g. email@email.com"
                     />
                     
@@ -44,6 +84,8 @@ const CustomerService = () => {
                     <TextInput 
                         style={styles.input}
                         placeholder="e.g. Feedback, Concern"
+                        value={subject}
+                        onChangeText={setSubject}
                     />
 
                     <Text style={styles.label}>Message</Text>
@@ -52,9 +94,11 @@ const CustomerService = () => {
                         numberOfLines={10}
                         multiline={true}
                         placeholder="Type your message here"
+                        value={message}
+                        onChangeText={setMessage}
                     />  
 
-                    <Pressable style={styles.submitBtn}>
+                    <Pressable style={styles.submitBtn} onPress={handleSubmit}>
                         <Text style={styles.submitText}>
                              Submit
                         </Text>

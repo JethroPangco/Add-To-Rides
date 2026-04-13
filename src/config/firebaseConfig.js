@@ -19,3 +19,8 @@ export const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage),
 });
 export const db = getDatabase(app);
+
+/* 
+for expo and web
+import { getAuth } from "firebase/auth";
+export const auth = getAuth(app);*/

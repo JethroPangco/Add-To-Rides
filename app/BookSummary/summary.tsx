@@ -7,7 +7,6 @@ import { auth, db } from "../../src/config/firebaseConfig";
 import { ref, get, push, set, remove } from "firebase/database";
 
 const paymentOptions = [
-    { id: "qrph", name: "QRPH" },
     { id: "card", name: "Credit/Debit Card" },
     { id: "gcash", name: "GCash" },
 ];
@@ -78,7 +77,23 @@ const BookingSummary = () => {
                     onPress: async () => {
                         const reference = refNumber();
                         const date = new Date().toISOString();
-    
+
+                        const schedDate = new Date(entrance.date || new Date());
+
+                        const validFrom = new Date(schedDate);
+                        validFrom.setHours(11, 0, 0);
+
+                        const validUntil = new Date(schedDate);
+                        validUntil.setHours(20, 0, 0);
+                        
+                        const now = new Date();
+                        let ticketStatus = "NOT YET VALID";
+                        if (now >= validFrom && now <= validUntil) {
+                            ticketStatus = "VALID";
+                        } else if (now > validUntil) {
+                            ticketStatus = "EXPIRED";
+                        }
+
                         const bookingRef = push(ref(db, `transaction/${userId}`));
                         await set(bookingRef, {
                             entranceTicket: entrance,
@@ -90,6 +105,11 @@ const BookingSummary = () => {
                                 date,
                             },
                             collectedPoints: ridePoints,
+
+                            validFrom: validFrom.toISOString(),
+                            validUntil: validUntil.toISOString(),
+
+                            ticketStatus
                         });
     
                         await remove(ref(db, `cart/${userId}`));
@@ -186,16 +206,16 @@ const BookingSummary = () => {
                         <Text style={styles.texts}>Php {rideTotal.toFixed(2)}</Text>
                     </View>
 
-                    <View style={styles.totalView}>
-                        <Text style={[styles.texts, {fontWeight: "500", fontSize: 15}]}>Collected Points: </Text>
-                        <Text style={styles.texts}>{ridePoints}</Text>
-                    </View>
 
                     <View style={[styles.divider, { margin: 30 }]}/>
 
                     <View style={styles.totalView}>
                         <Text style={[styles.texts, {fontSize: 30}]}>TOTAL: </Text>
                         <Text style={[styles.texts, {fontSize: 30}]}>Php {grandTotal.toFixed(2)}</Text>
+                    </View>
+                    <View style={styles.totalView}>
+                        <Text style={[styles.texts, {fontWeight: "500", fontSize: 15}]}>Collected Points: </Text>
+                        <Text style={styles.texts}>{ridePoints}</Text>
                     </View>
                 </View>
             </ScrollView>

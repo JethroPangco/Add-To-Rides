@@ -36,10 +36,8 @@ const AddCart = () => {
       if (data) {
         const items = Object.values(data);
         setCart(items);
-        setSelectedItems([]);
       } else {
         setCart([]);
-        setSelectedItems([]);
       }
     });
 
@@ -98,6 +96,22 @@ const AddCart = () => {
         sum + categoryPoints[item.category] * item.quantity,
       0
     );
+  
+  const checkEntranceTicket = async () => {
+    if (!userId) return false;
+
+    const bookingRef = ref(db, `bookings/${userId}`);
+    const snapshot = await get(bookingRef);
+
+    if (!snapshot.exists()) return false;
+
+    const data = snapshot.val();
+
+    return (
+      data?.entranceTicket &&
+      Object.keys(data.entranceTicket || {}).length > 0
+    );
+  };
 
   const handleCheckout = async () => {
     if (!userId) return;
@@ -106,6 +120,23 @@ const AddCart = () => {
 
     if (selected.length === 0) {
       Alert.alert("No Selected Items", "Please select at least 1 ride.");
+      return;
+    }
+
+    const entTicketExist = await checkEntranceTicket();
+
+    if (!entTicketExist) {
+      Alert.alert(
+        "No Entrance Ticket",
+        "You need to book an entrance ticket before checkout.",
+        [
+          { text: "Cancel" },
+          {
+            text: "Book Now",
+            onPress: () => router.push("../EntranceTicket/enticket"),
+          },
+        ]
+      );
       return;
     }
 
@@ -244,9 +275,6 @@ const AddCart = () => {
             Total Ride Selected:
           </Text>
           <Text style={styles.summaryTxt}>
-            Total Points:
-          </Text>
-          <Text style={styles.summaryTxt}>
             Total Amount:
           </Text>
         </View>
@@ -255,9 +283,7 @@ const AddCart = () => {
           <Text style={styles.calcTxt}>
             {selectedCount}
           </Text>
-          <Text style={styles.calcTxt}>
-            {totalPoints}
-          </Text>
+          
           <Text style={styles.calcTxt}>
             Php {totalPrice.toFixed(2)}
           </Text>

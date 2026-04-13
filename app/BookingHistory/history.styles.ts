@@ -8,7 +8,7 @@ export default StyleSheet.create({
     
     scroll: {
         paddingBottom: 90,
-        paddingTop: 30
+        paddingTop: 30,
     },
 
     arrowBack: {
@@ -36,6 +36,15 @@ export default StyleSheet.create({
         color: "#fff"
     },
 
+    backgroundContainer: {
+        marginBottom: 20,
+        marginHorizontal: 20, 
+        backgroundColor: "#fff",
+        elevation: 3,
+        padding: 15,
+        borderRadius: 10
+    },
+
     subTitle: { 
         textAlign: "left", 
         fontSize: 18, 
@@ -55,7 +64,8 @@ export default StyleSheet.create({
     txtHeader: {
         marginLeft: 20, 
         fontWeight: "bold",
-        fontSize: 18
+        fontSize: 18,
+        marginBottom: 15 
     },
 
     imgBg: {
@@ -86,7 +96,8 @@ export default StyleSheet.create({
         color: "#fff", 
         textAlign: "center", 
         fontWeight: "bold",
-        fontSize: 15 
+        fontSize: 15 ,
+        marginBottom: 5
     },
 
     totalTxt: {
@@ -110,6 +121,12 @@ export default StyleSheet.create({
         textTransform: "capitalize" 
     },
 
+    ptsContainer: {
+        flexDirection: "row", 
+        justifyContent: "space-between",
+        marginHorizontal: 20
+    }, 
+
     ptsTxt: {
         paddingVertical: 5,
         marginHorizontal: 20, 
@@ -121,5 +138,22 @@ export default StyleSheet.create({
     noRec: {
         padding: 20, 
         alignItems: "center"
+    },
+
+    touchTabs: {
+        flexDirection: "row",
+        justifyContent: "space-around",
+        marginTop: 100,
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
+        padding: 20
+    },
+
+    viewReceiptBtn: {
+        marginTop: 10,
+        backgroundColor: "#007800",
+        padding: 10,
+        borderRadius: 5,
+        alignItems: "center",
+        marginHorizontal: 15
     }
 });

@@ -22,8 +22,13 @@ const BookingHistory = () => {
 
   const [transactions, setTransactions] = React.useState<any[]>([]);
   const [entranceBookings, setEntranceBookings] = React.useState<any[]>([]);
-  const [activeTab, setActiveTab] = React.useState<"rides" | "entrance" | "points">("rides");
 
+  const [cancelledBookings, setCancelledBookings] = React.useState<any[]>([]);
+  const [redeemedRewards, setRedeemedRewards] = React.useState<any[]>([]);
+
+  const [activeTab, setActiveTab] = React.useState<"rides" | "entrance" | "points" | "cancelled">("rides");
+
+  
   React.useEffect(() => {
     loadTransactions();
   }, []);
@@ -47,10 +52,71 @@ const BookingHistory = () => {
         entranceData = Object.values(bookings.entranceTicket || {}).reverse();
       }
 
+      const cancelSnap = await get(ref(db, `cancelledBookings/${userId}`));
+      let cancelData: any[] = [];
+
+      if (cancelSnap.exists()) {
+        cancelData = Object.values(cancelSnap.val()).reverse();
+      }
+
+      const redeemSnap = await get(ref(db, `redeemedRewards/${userId}`));
+      let redeemData: any[] = [];
+
+      if (redeemSnap.exists()) {
+        redeemData = Object.entries(redeemSnap.val())
+        .map(([key, value]: any) => ({
+          ...value,
+          key, 
+        }))
+        .reverse();
+      }
+
       setTransactions(transData);
       setEntranceBookings(entranceData);
+      setCancelledBookings(cancelData);
+      setRedeemedRewards(redeemData);
     } catch (error) {
       console.log(error);
+    }
+  };
+  
+  const format12hr = (date: string) => {
+    if (!date) return "";
+    return new Date(date).toLocaleString("en-PH", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+      month: "short",
+      day: "2-digit",
+      year: "numeric",
+    });
+  };
+
+  const shortRef = (ref: string) => {
+    if (!ref) return "";
+    return `${ref.slice(0, 2)}-${ref.slice(-4)}`;
+  };
+
+  const getStatus = (item: any) => {
+    const now = new Date();
+    const validFrom = new Date(item.bookedAt || item.payment?.date);
+    const validUntil = new Date(item.validUntil || item.entranceTicket?.validUntil);
+
+    if (now < validFrom) return "UPCOMING";
+    if (now > validUntil) return "EXPIRED";
+    return "VALID";
+  };
+
+  const statusColor = (status: string) => {
+    switch (status) {
+      case "VALID":
+        return "green";
+      case "UPCOMING":
+        return "orange";
+      case "EXPIRED":
+        return "red";
+      default:
+        return "#000";
     }
   };
 
@@ -108,10 +174,22 @@ const BookingHistory = () => {
 
       if (tx.collectedPoints) {
         pointsItems.push({
+          type: "earned",
           points: tx.collectedPoints,
           earnedAt: tx.payment?.date,
+          ref: tx.payment?.reference,
         });
       }
+    });
+
+    redeemedRewards.forEach((r: any) => {
+      pointsItems.push({
+        type: "redeemed",
+        points: -Math.abs(r.totalPointsUsed || r.points),
+        earnedAt: r.redeemedAt || r.date,
+        ref: r.key,
+        reward: r,
+      });
     });
   }
 
@@ -137,15 +215,19 @@ const BookingHistory = () => {
   const pointsByDate = groupByDate(pointsItems, "earnedAt");
 
   const ridesData = Object.values(ridesReference);
+  
   const entranceData = Object.keys(entranceByBooking).map((key) => ({
     createdAt: key,
     tickets: entranceByBooking[key],
   }));
+
   const pointsData = Object.keys(pointsByDate).map((key) => ({
     date: key,
     items: pointsByDate[key],
   }));
 
+  const cancelledData = cancelledBookings;
+  
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -162,27 +244,28 @@ const BookingHistory = () => {
         </Pressable>
       </View>
 
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-around",
-          marginTop: 120,
-          marginBottom: 10,
-        }}
-      >
+      <View style={styles.touchTabs}>
         <TouchableOpacity onPress={() => setActiveTab("rides")}>
           <Text style={{ fontWeight: activeTab === "rides" ? "bold" : "normal" }}>
             Rides Ticket
           </Text>
         </TouchableOpacity>
+        
         <TouchableOpacity onPress={() => setActiveTab("entrance")}>
           <Text style={{ fontWeight: activeTab === "entrance" ? "bold" : "normal" }}>
             Entrance Ticket
           </Text>
         </TouchableOpacity>
+        
         <TouchableOpacity onPress={() => setActiveTab("points")}>
           <Text style={{ fontWeight: activeTab === "points" ? "bold" : "normal" }}>
             Points Earned
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => setActiveTab("cancelled")}>
+          <Text style={{ fontWeight: activeTab === "cancelled" ? "bold" : "normal" }}>
+            Cancelled
           </Text>
         </TouchableOpacity>
       </View>
@@ -194,18 +277,36 @@ const BookingHistory = () => {
           keyExtractor={(item: any) => item.reference}
           contentContainerStyle={styles.scroll}
           renderItem={({ item }: { item: any }) => (
-            <View style={{ marginBottom: 25 }}>
-              <Text style={styles.txtHeader}>Ref: {item.reference}</Text>
+            <View style={styles.backgroundContainer}>
+              
+              {/* REFERENCE */}
+              <Text style={styles.txtHeader}>
+                Ref No: {shortRef(item.reference)}
+              </Text>
 
+              {/* TIME */}
               <Text style={{ marginLeft: 20, fontSize: 16 }}>
-                {new Date(item.bookedAt).toDateString()} |{" "}
-                {new Date(item.bookedAt).toLocaleTimeString()}
+                Order Date: {format12hr(item.bookedAt)}
               </Text>
 
-              <Text style={{ marginLeft: 20, marginBottom: 10 }}>
-                Method: {item.payment?.payMethod.toUpperCase()}
+              {/* PAYMENT METHOD */}
+              <Text style={{ marginLeft: 20, marginBottom: 5, textTransform: "capitalize" }}>
+                Payment Method: {item.payment?.payMethod}
               </Text>
 
+              {/* STATUS */}
+              <Text
+                style={{
+                  marginLeft: 20,
+                  marginBottom: 10,
+                  fontWeight: "bold",
+                  color: statusColor(getStatus(item)),
+                }}
+              >
+                Status: {getStatus(item)}
+              </Text>
+
+              {/* VIEW RECEIPT */}
               {item.rides.map((ride: any, idx: number) => {
                 const rideData = getRideDetails(ride.id);
                 if (!rideData) return null;
@@ -236,10 +337,22 @@ const BookingHistory = () => {
 
               <Text style={styles.totalTxt}>
                 Total: Php {item.payment?.totalPay}{" "}
-                <Text style={{ fontSize: 10, fontStyle: "italic", fontWeight: "normal" }}>
+                <Text style={{ fontSize: 10, fontStyle: "italic" }}>
                   Note: entrance tickets included
                 </Text>
               </Text>
+
+              <Pressable
+                onPress={() =>
+                  router.push({
+                    pathname: "../BookSummary/receipt",
+                    params: { ref: item.reference },
+                  })
+                }
+                style={styles.viewReceiptBtn}
+              >
+                <Text style={{ color: "#fff" }}>View Receipt</Text>
+              </Pressable>
             </View>
           )}
           ListEmptyComponent={() => (
@@ -257,7 +370,7 @@ const BookingHistory = () => {
           keyExtractor={(item) => item.createdAt}
           contentContainerStyle={styles.scroll}
           renderItem={({ item }: { item: any }) => (
-            <View style={{ marginBottom: 20 }}>
+            <View style={styles.backgroundContainer}>
               <Text style={styles.txtHeader}>
                 {new Date(item.createdAt).toDateString()}
               </Text>
@@ -267,11 +380,8 @@ const BookingHistory = () => {
                   <Text style={styles.entType}>{ticket.type}</Text>
                   <Text>Qty: {ticket.quantity}</Text>
                   <Text>Total: Php {ticket.totalPrice}</Text>
-                  <Text>Scheduled Date: {ticket.visitDate}</Text>
-                  <Text>
-                    Booked Time:{" "}
-                    {new Date(ticket.createdAt).toLocaleTimeString()}
-                  </Text>
+                  <Text>Scheduled Date: {format12hr(ticket.visitDate)}</Text>
+                  <Text>Booked Time: {format12hr(ticket.createdAt)}</Text>
                 </View>
               ))}
             </View>
@@ -291,21 +401,39 @@ const BookingHistory = () => {
           keyExtractor={(item) => item.date}
           contentContainerStyle={styles.scroll}
           renderItem={({ item }: { item: any }) => (
-            <View style={{ marginBottom: 20 }}>
+            <View style={styles.backgroundContainer}>
               <Text style={styles.txtHeader}>{item.date}</Text>
 
               {item.items.map((p: any, idx: number) => (
                 <View
                   key={idx}
-                  style={{ flexDirection: "row", justifyContent: "space-between" }}
+                  style={styles.ptsContainer}
                 >
-                  <Text style={[styles.ptsTxt, { color: "#000" }]}>
-                    {new Date(p.earnedAt).toLocaleTimeString()}
+                  <Text>{format12hr(p.earnedAt)}</Text>
+                  <Text
+                    style={[
+                      styles.ptsTxt,
+                      { color: p.type === "redeemed" ? "red" : "green" },
+                    ]}
+                  >
+                    {p.type === "redeemed" ? "-" : "+"}
+                    {Math.abs(p.points)} Points
                   </Text>
 
-                  <Text style={styles.ptsTxt}>
-                    + {p.points} Points
-                  </Text>
+                  {p.type === "redeemed" && (
+                    <Pressable
+                      onPress={() =>
+                        router.push({
+                          pathname: "../Reward/rew-receipt",
+                          params: { ref: p.ref },
+                        })
+                      }
+                    >
+                      <Text style={{ color: "blue", marginTop: 5 }}>
+                        View
+                      </Text>
+                    </Pressable>
+                  )}
                 </View>
               ))}
             </View>
@@ -313,6 +441,87 @@ const BookingHistory = () => {
           ListEmptyComponent={() => (
             <View style={styles.noRec}>
               <Text>No points history yet</Text>
+            </View>
+          )}
+        />
+      )}
+
+      {/* CANCELLED */}
+      {activeTab === "cancelled" && (
+        <FlatList
+          data={cancelledData}
+          keyExtractor={(item, index) => item.payment?.reference || index.toString()}
+          contentContainerStyle={styles.scroll}
+          renderItem={({ item }) => {
+            const rides = item.ridesTicket?.rides || [];
+
+            return (
+              <View style={styles.backgroundContainer}>
+
+                {/* REFERENCE */}
+                <Text style={styles.txtHeader}>
+                  Ref No: {shortRef(item.payment?.reference)}
+                </Text>
+
+                {/* CANCEL TIME */}
+                <Text style={{ marginLeft: 20, fontSize: 16 }}>
+                  Cancelled At: {format12hr(item.cancelledAt)}
+                </Text>
+
+                {/* PAYMENT METHOD */}
+                <Text style={{ marginLeft: 20, marginBottom: 5, textTransform: "capitalize" }}>
+                  Payment Method: {item.payment?.payMethod}
+                </Text>
+                
+                {/* STATUS */}
+                <Text style={{ marginLeft: 20, marginBottom: 10, color: "red", fontWeight: "bold" }}>
+                  Status: CANCELLED
+                </Text>
+
+                {/* RIDES (WITH IMAGES - FIXED) */}
+                {rides.map((ride: any, idx: number) => {
+                  const rideData = getRideDetails(ride.id);
+                  if (!rideData) return null;
+
+                  return (
+                    <ImageBackground
+                      key={`${item.payment?.reference}-${ride.id}-${idx}`}
+                      source={rideData.image}
+                      style={styles.imgBg}
+                    >
+                      <View
+                        style={[
+                          styles.overflow,
+                          { backgroundColor: categoryColors[rideData.category] },
+                        ]}
+                      />
+
+                      <View style={styles.imgTxt}>
+                        <Text style={styles.imgTxt2}>
+                          {rideData.name} (x{ride.quantity})
+                        </Text>
+
+                        <Text style={[styles.imgTxt2, { fontWeight: "normal" }]}>
+                          Php {ride.totalPrice ?? rideData.price * ride.quantity}
+                        </Text>
+                      </View>
+                    </ImageBackground>
+                  );
+                })}
+
+                <Text style={styles.totalTxt}>
+                  Total: Php {item.payment?.totalPay}{" "}
+                  <Text style={{ fontSize: 10, fontStyle: "italic" }}>
+                    Note: entrance tickets included
+                  </Text>
+                </Text>
+
+              </View>
+            );
+          }}
+          ListEmptyComponent={() => (
+            <View style={styles.noRec}>
+              <Text>No cancelled bookings yet</Text>
             </View>
           )}
         />
