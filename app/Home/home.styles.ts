@@ -147,9 +147,11 @@ export default StyleSheet.create({
     
     cardImage: { 
         justifyContent: "center", 
+        alignSelf: "center",
         padding: 10 ,
         width: SCREEN_WIDTH * 0.9,
         height: 257, 
+        borderRadius: 20
     },
     
     infoMainText: {

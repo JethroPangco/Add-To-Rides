@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import {
   View,
   Text,
@@ -21,15 +21,17 @@ const RideReservation = () => {
   const SIDEBAR_WIDTH = width * 0.75;
   const router = useRouter();
 
-  const [category, setCategory] = useState("exciting");
+  const { category: routeCateg } = useLocalSearchParams();
+
+  const [category, setCategory] = useState(routeCateg ? routeCateg : "all");
   const [search, setSearch] = useState("");
 
   const sidebarX = React.useRef(new Animated.Value(-SIDEBAR_WIDTH)).current;
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  
+
   const filtered = rides.filter(
     (ride) =>
-      ride.category === category &&
+      (category === "all" || ride.category === category) &&
       ride.name.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -80,7 +82,7 @@ const RideReservation = () => {
     router.replace("/Login/Login");
   };
 
-  const renderItem = ({ item }) => (
+  const renderItem = ({ item }: any) => (
     <View style={styles.card}>
       <Image source={item.image} style={styles.image} />
 
@@ -161,7 +163,7 @@ const RideReservation = () => {
 
               {/* Buttons */}
               <View style={styles.btn}>
-                {["exciting", "thrilling", "extreme"].map((item) => (
+                {["all", "exciting", "thrilling", "extreme"].map((item) => (
                   <Pressable key={item} onPress={() => setCategory(item)}>
                     <Text
                       style={{

@@ -9,7 +9,8 @@ import {
   ImageBackground,
   Animated,
   PanResponder,
-  Dimensions
+  Dimensions,
+  FlatList
 } from "react-native";
 import styles from "./home.styles";
 import Sidebar from "../Navigation/Sidebar";
@@ -98,6 +99,35 @@ const Home = () => {
       router.replace('/Login/Login');
     };
 
+    const carouselImg = [
+      require("../../assets/images/home-carousel.png"),
+      { uri : "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiNNQ2wN2P4akbIMO9c4WaYzU9lHzsP3oNxRawRfEu89mec49M5dbLNfutOW-ADxkTlhBRUV8WCNhAEAh4j5mxD5y0DB3EL-YVDhv7so5swtDW2suHncacK3jLVY_f_S7s0pN6xA-iup9YxApyZSzGBQ-lOwwrBUMtZo5nj5k9bH3uftdNnWMHosGYAg68/s4096/IMG_20241019_143456_edit_75778201484946.jpg"},
+      { uri : "https://d1ef7ke0x2i9g8.cloudfront.net/hong-kong/_1200x630_crop_center-center_82_none/The-Ultimate-Guide-to-Enchanted-Kingdom-PH.webp?mtime=1736156198"},
+      { uri : "https://blooloop.com/media-library/grand-carousel-enchanted-kingdon-the-philippines.jpg?id=56984899&width=2000&height=1500&coordinates=122%2C0%2C122%2C0"},
+      { uri : "https://images.gmanews.tv/webpics/2020/03/ek_2020_03_13_19_24_15.png"},
+    ];
+
+    const flatListRef = React.useRef(null);
+    const [currentIndex, setCurrentIndex] = React.useState(0);
+
+    React.useEffect(() => {
+      const interval = setInterval(() => {
+        setCurrentIndex((prev) => {
+          const next =
+            prev === carouselImg.length - 1 ? 0 : prev + 1;
+    
+          flatListRef.current?.scrollToIndex({
+            index: next,
+            animated: true,
+          });
+    
+          return next;
+        });
+      }, 3000);
+    
+      return () => clearInterval(interval);
+    }, []);
+
   return (
     <View style={styles.container} {...panResponder.panHandlers}>
       {/* Sidebar */}
@@ -178,7 +208,12 @@ const Home = () => {
             <Pressable
               key={index}
               style={styles.rideCard}
-              onPress={() => alert(`${ride.name} pressed!`)}
+              onPress={() => 
+                router.push({
+                  pathname: "../Ride/ride",
+                  params: { category: ride.name.toLocaleLowerCase()}
+                })
+              }
             >
               <ImageBackground
                 source={ride.image}
@@ -196,12 +231,22 @@ const Home = () => {
 
         {/* Info Card */}
         <View style={styles.infoCard}>
-          <ImageBackground
-              source={require("../../assets/images/home-carousel.png")}
+        <FlatList
+          ref={flatListRef}
+          data={carouselImg}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(_, index) => index.toString()}
+          renderItem={({ item }) => (
+            <Image
+              source={item}
               style={styles.cardImage}
-              imageStyle={{ borderRadius: 10 }}
-          >
-          </ImageBackground>
+              resizeMode="cover"
+            />
+          )}
+          
+        />
            
           <View style={styles.infoMainText}>
               <View style={styles.textContainer}>
@@ -210,10 +255,7 @@ const Home = () => {
                 <Text style={styles.cardSubtitle}>
                   Get your online ticket now to enjoy ride without any hassle.
                 </Text>
-          
-                <Pressable onPress={() => router.push('../../Ride/ride')}>
-                  <Text style={styles.viewRidesText}>View Rides →</Text>
-                </Pressable>
+        
               </View>
           
               {/* Character Image */}
