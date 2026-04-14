@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Add_To_Ride",
-    "slug": "add_to_ride",
+    "slug": "Add_To_Ride",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/add-to-rides-blue.png",
@@ -17,7 +17,8 @@
         "foregroundImage": "./assets/images/add-to-rides-blue.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.kylxgxy.Add_To_Ride"
     },
     "web": {
       "output": "static",
@@ -43,6 +44,19 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "ef0eb40a-43d1-4535-be37-6d99b39dd745"
+      }
+    },
+    "owner": "kylxgxy",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/ef0eb40a-43d1-4535-be37-6d99b39dd745"
     }
   }
 }
